@@ -26,7 +26,7 @@ bash install.sh --admin-password 'MyStrongPassword123'
 bash install.sh --no-pm2
 ```
 
-脚本会自动检查 Node.js 20、生成 `.env`、安装依赖、创建 `linux-data/`，并使用 PM2 启动服务。
+脚本会自动检查 Node.js；Ubuntu/Debian 上未安装或版本低于 20 时会自动安装 Node.js 20，然后生成 `.env`、安装依赖、创建 `linux-data/`，并使用 PM2 启动服务。
 
 ## 手动安装
 

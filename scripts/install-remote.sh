@@ -24,6 +24,8 @@ Options:
   --admin-password <pwd>    Initial admin password, default: 123456
   -h, --help                Show help
 
+The script installs missing basics on Ubuntu/Debian, including git and Node.js 20+.
+
 Example:
   curl -fsSL https://raw.githubusercontent.com/<user>/ai-xuewei/main/scripts/install-remote.sh | bash -s -- --repo https://github.com/<user>/ai-xuewei.git
 EOF
@@ -101,7 +103,36 @@ install_git_if_needed() {
   fi
 }
 
+node_major() {
+  if ! need_cmd node; then
+    echo 0
+    return
+  fi
+  node -p "Number(process.versions.node.split('.')[0])" 2>/dev/null || echo 0
+}
+
+install_node_if_needed() {
+  local major
+  major="$(node_major)"
+  if [[ "$major" -ge 20 ]]; then
+    echo "Node.js $(node -v) detected."
+    return
+  fi
+
+  echo "Node.js 20+ is required. Installing Node.js 20..."
+  if need_cmd apt-get; then
+    sudo_cmd apt-get update
+    sudo_cmd apt-get install -y ca-certificates curl gnupg
+    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo_cmd bash -
+    sudo_cmd apt-get install -y nodejs
+  else
+    echo "Unsupported package manager. Please install Node.js 20+ manually, then run this script again." >&2
+    exit 1
+  fi
+}
+
 install_git_if_needed
+install_node_if_needed
 
 if [[ -d "$INSTALL_DIR/.git" ]]; then
   echo "Existing repository found: $INSTALL_DIR"

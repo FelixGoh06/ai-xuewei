@@ -60,7 +60,7 @@ curl -fsSL https://raw.githubusercontent.com/FelixGoh06/ai-xuewei/main/scripts/i
 
 安装脚本会自动完成：
 
-- 检查并安装 Node.js 20。
+- 检查 Node.js；Ubuntu/Debian 上未安装或版本低于 20 时会自动安装 Node.js 20。
 - 拉取本仓库源码。
 - 生成 `.env` 配置。
 - 安装 npm 依赖。
