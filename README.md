@@ -287,7 +287,7 @@ Root directory：留空
 Functions directory：默认 functions
 ```
 
-注意：按钮只能帮你跳到创建入口，R2/D1 绑定和环境变量仍需要在 Pages 项目 Settings 里配置。
+注意：R2/D1 绑定和环境变量仍需要在 Pages 项目 Settings 里配置。
 
 ### 2. 准备 wrangler 配置
 
