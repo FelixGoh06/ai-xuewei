@@ -78,6 +78,9 @@ async function adminsFromEnv(env) {
 }
 
 export async function readAdminUserStore(env) {
+    if (!env?.R2_BUCKET) {
+        throw new Error("R2_BUCKET 未绑定：请在 Cloudflare Pages 的 Functions 绑定中添加 R2 存储桶绑定，变量名必须为 R2_BUCKET，并重新部署。");
+    }
     const existing = await readJson(env.R2_BUCKET, ADMIN_USERS_KEY, null);
     if (existing?.users && typeof existing.users === "object") return existing;
     const store = await adminsFromEnv(env);

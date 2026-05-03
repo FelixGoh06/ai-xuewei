@@ -2,6 +2,14 @@
 
 AI学委是一套面向课程作业收集、提交管理和在线审阅的轻量系统。它可以部署在 Linux 服务器上，也可以部署到 Cloudflare Pages，适合班级、课程小组、实验课、社团或个人教学场景使用。
 
+<p>
+  <a href="https://dash.cloudflare.com/?to=/:account/pages/new/provider/github" target="_blank">
+    <img src="https://img.shields.io/badge/Cloudflare%20Pages-创建%20Pages%20项目-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="创建 Cloudflare Pages 项目">
+  </a>
+</p>
+
+> 说明：Cloudflare 官方 Deploy Button 主要面向 Workers 模板，Pages 项目仍需要在 Dashboard 中连接 GitHub 仓库并手动绑定 R2/D1。上面的按钮会直接跳转到 Pages 创建入口。
+
 ## 主要特性
 
 - 学生端登录、首次改密、作业提交、提交历史、在线预览和撤回。
@@ -264,11 +272,22 @@ Cloudflare 版本使用：
 
 ### 1. 创建资源
 
-在 Cloudflare Dashboard 创建：
+可以点击 README 顶部的 Cloudflare Pages 按钮进入 Pages 创建页，或在 Cloudflare Dashboard 手动创建：
 
-- 一个 Pages 项目。
+- 一个 Pages 项目，并连接本 GitHub 仓库。
 - 一个 R2 Bucket。
 - 一个 D1 Database。
+
+Pages 创建时建议填写：
+
+```text
+Build command：留空
+Build output directory：public
+Root directory：留空
+Functions directory：默认 functions
+```
+
+注意：按钮只能帮你跳到创建入口，R2/D1 绑定和环境变量仍需要在 Pages 项目 Settings 里配置。
 
 ### 2. 准备 wrangler 配置
 
@@ -336,7 +355,7 @@ npx wrangler pages dev public
 npx wrangler pages deploy public --project-name ai-xuewei
 ```
 
-也可以在 Cloudflare Pages Dashboard 连接 GitHub 仓库：
+也可以在 Cloudflare Pages Dashboard 连接 GitHub 仓库。配置完成后请确认：
 
 - Build command 留空。
 - Build output directory 填 `public`。
@@ -344,6 +363,9 @@ npx wrangler pages deploy public --project-name ai-xuewei
 - 绑定 R2：`R2_BUCKET`。
 - 绑定 D1：`DB`。
 - 配置环境变量。
+- 修改绑定或环境变量后，需要重新部署一次。
+
+如果登录时报 `Cannot read properties of undefined (reading 'get')`，通常表示当前访问的 Pages 部署没有吃到 `R2_BUCKET` 绑定。请确认访问的 Pages 项目、部署环境（Production/Preview）和绑定配置是同一个。
 
 ## OpenClaw Skill
 
