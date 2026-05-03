@@ -123,13 +123,22 @@ linux-data/
 一键卸载：
 
 ```bash
+cd /opt/ai-xuewei
 bash uninstall.sh
 ```
 
 删除服务并移除 `.env`、`linux-data/`：
 
 ```bash
+cd /opt/ai-xuewei
 bash uninstall.sh --remove-data
+```
+
+如果当前不在项目目录，也可以直接执行：
+
+```bash
+bash /opt/ai-xuewei/uninstall.sh
+bash /opt/ai-xuewei/uninstall.sh --remove-data
 ```
 
 手动卸载步骤如下。

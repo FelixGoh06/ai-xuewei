@@ -221,13 +221,22 @@ pm2 restart ai-xuewei
 保留数据，仅移除 PM2 服务：
 
 ```bash
+cd /opt/ai-xuewei
 bash uninstall.sh
 ```
 
 同时删除 `.env` 和 `linux-data/`：
 
 ```bash
+cd /opt/ai-xuewei
 bash uninstall.sh --remove-data
+```
+
+如果当前不在项目目录，也可以直接执行：
+
+```bash
+bash /opt/ai-xuewei/uninstall.sh
+bash /opt/ai-xuewei/uninstall.sh --remove-data
 ```
 
 如需删除项目目录：
