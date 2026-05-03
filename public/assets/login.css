@@ -1,0 +1,155 @@
+:root {
+            --surface: #fbf9f4;
+            --surface-low: #f5f4ed;
+            --surface-mid: #efeee7;
+            --ink: #31332e;
+            --ink-soft: #5e6059;
+            --sage: #5c614e;
+            --indigo: #5d5c7a;
+            --outline: rgba(122, 123, 117, 0.2);
+        }
+
+        body {
+            opacity: 0;
+            transition: opacity 0.28s ease;
+            font-family: Inter, sans-serif;
+            color: var(--ink);
+            background: radial-gradient(circle at 20% 0%, #f0eee7 0%, transparent 36%), var(--surface);
+        }
+
+        .login-shell {
+            background: rgba(251, 249, 244, 0.66);
+            border: 1px solid var(--outline);
+            box-shadow: 0 30px 72px rgba(49, 51, 46, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .hero-panel {
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.16), transparent 45%),
+                radial-gradient(circle at 85% 75%, rgba(93, 92, 122, 0.22), transparent 42%),
+                linear-gradient(150deg, #1f2937 0%, #2f3f58 52%, #4f6376 100%);
+        }
+
+        .hero-panel::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.0) 32%);
+            pointer-events: none;
+        }
+
+        .form-panel {
+            background: rgba(251, 249, 244, 0.72);
+            border-left: 1px solid rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(22px) saturate(160%);
+            -webkit-backdrop-filter: blur(22px) saturate(160%);
+        }
+
+        .glass-input {
+            background: color-mix(in srgb, var(--surface-low) 85%, white 15%);
+            border: 1px solid var(--outline);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 8px 20px rgba(49, 51, 46, 0.04);
+        }
+
+        .tab-btn {
+            background: color-mix(in srgb, var(--surface-low) 82%, white 18%);
+            border: 1px solid var(--outline);
+            color: var(--ink-soft);
+        }
+
+        .tab-btn.active {
+            background: color-mix(in srgb, #d6d4f7 65%, var(--surface) 35%);
+            border-color: rgba(93, 92, 122, 0.35);
+            color: #3f3f56;
+            box-shadow: 0 6px 20px rgba(49, 51, 46, 0.08);
+        }
+
+        .soft-primary {
+            background: color-mix(in srgb, #d6d4f7 66%, var(--surface) 34%);
+            border: 1px solid rgba(93, 92, 122, 0.3);
+            color: #3f3f56;
+        }
+
+        .soft-primary:hover {
+            background: color-mix(in srgb, #cdc9f3 68%, var(--surface) 32%);
+        }
+
+        .soft-success {
+            background: color-mix(in srgb, #e0e5cc 72%, var(--surface) 28%);
+            border: 1px solid rgba(92, 97, 78, 0.3);
+            color: #3c4130;
+        }
+
+        .soft-success:hover {
+            background: color-mix(in srgb, #d5ddbc 74%, var(--surface) 26%);
+        }
+
+        .font-serif,
+        h1,
+        h2,
+        h3 {
+            font-family: Newsreader, serif;
+        }
+
+        .animate-float-in {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        body.login-ready .animate-float-in {
+            animation: floatIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes floatIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-tilt {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+            transform-style: preserve-3d;
+        }
+
+        .card-tilt:hover {
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.12), 0 18px 36px -18px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            top: var(--glow-y, 50%);
+            left: var(--glow-x, 50%);
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle closest-side, rgba(255, 255, 255, 0.45), transparent);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .btn-glow:hover::after {
+            opacity: 1;
+        }
+
+        /* 增加输入框的动感效果 */
+        input {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        input:focus {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.08);
+        }

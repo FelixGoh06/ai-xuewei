@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI学委</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300..800&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <script src="./tailwind.js"></script>
+
+    <link rel="stylesheet" href="./assets/index.css">
+
+    <script src="./assets/index-head.js"></script>
+</head>
+
+<body class="view-home min-h-screen bg-fixed font-sans text-gray-800">
+
+    <nav id="main-nav"
+        class="fixed top-0 left-0 z-50 w-full lg:w-[280px] glass-nav transition-all duration-500 origin-top">
+        <div class="px-4 sm:px-8 py-4 lg:py-8 flex items-center justify-between lg:block">
+            <div class="flex items-center shrink-0">
+                <div class="flex items-center space-x-2 lg:flex-col lg:items-start lg:space-x-0 lg:space-y-2">
+                    <div class="flex items-center gap-2 mb-2">
+                        <img src="https://imgbed.306421.xyz/file/背景/1777783256470_1_file.png" alt="Logo"
+                            class="w-32 h-32 object-contain">
+                    </div>
+                    <span class="hidden lg:block text-[11px] text-[#8a8a8a] font-medium tracking-wider"></span>
+                </div>
+            </div>
+            <div
+                class="flex items-center space-x-1 sm:space-x-2 shrink-0 lg:mt-10 lg:space-x-0 lg:flex-col lg:items-stretch lg:gap-2">
+                <button onclick="switchTab('home')" id="nav-home" class="nav-btn nav-active">
+                    <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <path d="M9 3v18" />
+                    </svg>
+                    工作室
+                </button>
+                <button onclick="switchTab('history')" id="nav-history" class="nav-btn">
+                    <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    历史
+                </button>
+                <div class="relative group lg:mt-auto lg:w-full">
+                    <button id="account-menu-btn" onclick="toggleAccountMenu()"
+                        class="nav-btn w-full flex lg:justify-between items-center justify-center flex-col lg:flex-row gap-1 lg:gap-0">
+                        <div class="flex items-center flex-col lg:flex-row lg:gap-3">
+                            <svg class="w-5 h-5 lg:w-4 lg:h-4 opacity-70 mb-1 lg:mb-0" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span class="text-[11px] lg:text-[0.9rem] lg:font-semibold whitespace-nowrap">账户</span>
+                        </div>
+                        <svg class="w-3 h-3 opacity-50 transition-transform duration-200 hidden lg:block"
+                            id="account-menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div id="account-settings-menu"
+                        class="hidden lg:static absolute bottom-[110%] left-1/2 -translate-x-1/2 lg:translate-x-0 lg:left-0 w-[180px] lg:w-full bg-white/95 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none border border-[#e5e4e0] lg:border-none rounded-2xl lg:rounded-none shadow-xl lg:shadow-none z-50 mt-1">
+                        <div class="px-2 py-3 lg:py-2 space-y-1">
+                            <div class="px-3 pb-2 mb-2 border-b border-[#e5e4e0]">
+                                <span class="text-[11px] text-[#8a8a8a]">当前登录</span>
+                                <span id="current-user-name"
+                                    class="block text-[13px] font-bold text-[#2c2c2c] truncate mt-0.5">未登录</span>
+                            </div>
+                            <button id="student-change-password-btn"
+                                class="w-full text-left px-3 py-2 text-[13px] text-[#2c2c2c] font-medium hover:bg-[#eceae1] rounded-lg transition-colors flex items-center gap-2.5">
+                                <svg class="w-3.5 h-3.5 opacity-50" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                修改密码
+                            </button>
+                            <div class="h-px bg-[#e5e4e0] my-1"></div>
+                            <button id="student-logout-btn"
+                                class="w-full text-left px-3 py-2 text-[13px] text-[#8a8a8a] font-medium hover:text-[#c45c5c] rounded-lg transition-colors flex items-center gap-2.5">
+                                <svg class="w-3.5 h-3.5 opacity-50" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                    <polyline points="16 17 21 12 16 7"></polyline>
+                                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                                </svg>
+                                退出登录
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="student-auth-overlay" class="fixed inset-0 z-[120] hidden items-center justify-center bg-[#f5f4ed] p-4">
+        <div
+            class="bg-white rounded-[24px] w-full max-w-[440px] p-10 shadow-sm border border-[#e5e4e0] mx-auto flex flex-col items-center card-tilt animate-float-in">
+            <!-- Logo -->
+            <div class="flex items-center gap-3 mb-8">
+                <img src="https://imgbed.306421.xyz/file/ico/1771604448679_ico_betav2.svg" alt="Logo"
+                    class="w-8 h-8 object-contain">
+                <span class="text-[22px] font-serif text-[#2c2c2c] font-bold tracking-wide uppercase">FileHub</span>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex w-full border-b border-[#e5e4e0] mb-8 relative">
+                <button id="auth-tab-student"
+                    class="flex-1 pb-3 text-[13px] font-bold text-[#2c2c2c] border-b-2 border-[#2c2c2c] transition-colors relative top-[1px]">学生端</button>
+                <button id="auth-tab-admin"
+                    class="flex-1 pb-3 text-[13px] font-bold text-[#8a8a8a] border-b-2 border-transparent hover:text-[#2c2c2c] transition-colors">管理端</button>
+            </div>
+
+            <!-- Header -->
+            <h3 class="text-[28px] font-serif text-[#2c2c2c] text-center leading-tight mb-3">统一身份登录</h3>
+            <p class="text-[13px] text-[#8a8a8a] text-center mb-8 px-4 leading-relaxed">学生登录后可提交作业、查看个人历史记录。</p>
+
+            <!-- Form -->
+            <div id="student-login-panel" class="w-full">
+                <div class="relative mb-4">
+                    <input id="student-login-id" type="text"
+                        class="w-full rounded-full border border-[#e5e4e0] bg-white px-5 py-3.5 text-[13px] font-bold text-[#2c2c2c] outline-none focus:border-[#5c614e] transition-colors placeholder:text-[#a0a0a0] placeholder:font-normal"
+                        placeholder="学号 / 姓名 / 用户名">
+                </div>
+
+                <div class="relative mb-6">
+                    <input id="student-login-pwd" type="password"
+                        class="w-full rounded-full border border-[#e5e4e0] bg-white px-5 py-3.5 text-[13px] font-bold text-[#2c2c2c] outline-none focus:border-[#5c614e] transition-colors placeholder:text-[#a0a0a0] placeholder:font-normal"
+                        placeholder="密码">
+                    <button type="button"
+                        class="absolute right-5 top-1/2 -translate-y-1/2 text-[#8a8a8a] hover:text-[#2c2c2c] transition-colors"
+                        onclick="const pwd=document.getElementById('student-login-pwd'); pwd.type=pwd.type==='password'?'text':'password';">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
+
+                <button id="student-login-btn"
+                    class="btn-glow w-full rounded-full bg-[#2c2c2c] text-white py-3.5 text-[13px] font-bold tracking-wide hover:bg-[#4a4b46] transition-colors shadow-sm"
+                    style="border: none !important; box-shadow: none !important; background: #2c2c2c !important; color: white !important;">登
+                    录</button>
+                <p id="student-login-err" class="text-[#7f2b35] text-[12px] font-bold text-center mt-3 hidden"></p>
+
+                <div class="mt-6 text-center">
+                    <a href="#" class="text-[12px] font-bold text-[#8a8a8a] hover:text-[#2c2c2c] transition-colors"
+                        onclick="alert('首次登录密码为：123456'); return false;">忘记密码？</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="change-password-overlay"
+        class="fixed inset-0 z-[125] hidden items-center justify-center p-4" style="background:rgba(44,44,44,0.3);backdrop-filter:blur(4px)">
+        <div class="bg-[#f9f8f5] rounded-[20px] p-8 max-w-[400px] w-full shadow-[0_24px_64px_rgba(0,0,0,0.12)]">
+            <h3 class="text-xl font-bold text-[#2c2c2c] font-serif mb-2">首次登录请修改密码</h3>
+            <p class="text-[14px] text-[#7a7a7a] mb-6">为了安全，默认密码不可继续使用。</p>
+            <input id="first-new-password" type="password"
+                class="block w-full bg-white border border-[#e5e4e0] rounded-full px-5 py-3 mb-3 text-[13px] outline-none focus:border-[#2c2c2c] transition-colors" placeholder="新密码（至少6位）">
+            <input id="first-new-password-2" type="password"
+                class="block w-full bg-white border border-[#e5e4e0] rounded-full px-5 py-3 mb-6 text-[13px] outline-none focus:border-[#2c2c2c] transition-colors" placeholder="确认新密码">
+            <button id="first-change-password-btn"
+                class="w-full py-3 rounded-xl text-[14px] font-semibold bg-[#2c2c2c] text-[#f5f4ed] hover:bg-[#1a1a1a] transition-colors">保存新密码</button>
+            <p id="first-change-password-err" class="text-[#c45c5c] text-[12px] font-medium text-center mt-3 hidden"></p>
+        </div>
+    </div>
+
+    <div id="change-password-modal"
+        class="fixed inset-0 z-[126] hidden items-center justify-center p-4" style="background:rgba(44,44,44,0.3);backdrop-filter:blur(4px)">
+        <div class="bg-[#f9f8f5] rounded-[20px] p-8 max-w-[400px] w-full shadow-[0_24px_64px_rgba(0,0,0,0.12)]">
+            <h3 class="text-xl font-bold text-[#2c2c2c] font-serif mb-2">修改密码</h3>
+            <p class="text-[14px] text-[#7a7a7a] mb-6">请输入旧密码后设置新密码。</p>
+            <input id="change-old-password" type="password"
+                class="block w-full bg-white border border-[#e5e4e0] rounded-full px-5 py-3 mb-3 text-[13px] outline-none focus:border-[#2c2c2c] transition-colors" placeholder="旧密码">
+            <input id="change-new-password" type="password"
+                class="block w-full bg-white border border-[#e5e4e0] rounded-full px-5 py-3 mb-3 text-[13px] outline-none focus:border-[#2c2c2c] transition-colors" placeholder="新密码（至少6位）">
+            <input id="change-new-password-2" type="password"
+                class="block w-full bg-white border border-[#e5e4e0] rounded-full px-5 py-3 mb-6 text-[13px] outline-none focus:border-[#2c2c2c] transition-colors" placeholder="确认新密码">
+            <div class="flex gap-3">
+                <button id="change-password-cancel"
+                    class="flex-1 py-3 rounded-xl text-[14px] font-semibold text-[#5c5c5c] bg-white border border-[#e5e4e0] hover:bg-[#eceae1] transition-colors">取消</button>
+                <button id="change-password-submit"
+                    class="flex-1 py-3 rounded-xl text-[14px] font-semibold bg-[#2c2c2c] text-[#f5f4ed] hover:bg-[#1a1a1a] transition-colors">保存</button>
+            </div>
+            <p id="change-password-err" class="text-[#c45c5c] text-[12px] font-medium text-center mt-3 hidden"></p>
+        </div>
+    </div>
+
+    <div id="global-notice-modal" class="fixed inset-0 z-[110] hidden items-center justify-center p-4">
+        <div id="global-notice-backdrop" class="absolute inset-0 bg-[#2c2c2c]/30 backdrop-blur-sm"></div>
+        <article class="relative w-full max-w-[560px] rounded-[22px] bg-[#fbf9f4] border border-[#e5e4e0] shadow-[0_24px_64px_rgba(49,51,46,0.16)] p-7 sm:p-8">
+            <div class="flex items-start justify-between gap-4 mb-5">
+                <div>
+                    <p class="text-[11px] font-bold tracking-widest uppercase text-[#8a8a8a] mb-2">Announcement</p>
+                    <h2 id="global-notice-modal-title" class="text-3xl font-serif text-[#2c2c2c] leading-tight">公告</h2>
+                </div>
+                <button type="button" onclick="closeGlobalNoticeModal()"
+                    class="w-9 h-9 rounded-full border border-[#e5e4e0] bg-white text-[#7a7a7a] hover:text-[#2c2c2c] hover:bg-[#efece1] transition flex items-center justify-center"
+                    title="关闭公告">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div id="global-notice-modal-content"
+                class="text-[15px] leading-8 text-[#5e6059] whitespace-pre-line border-t border-[#e5e4e0] pt-5"></div>
+        </article>
+    </div>
+
+    <div id="app-container" class="mx-auto px-4 sm:px-6 lg:px-10 pt-24 lg:pt-10 pb-20 min-h-screen">
+        <div id="workspace" class="w-full">
+            <div id="page-home" class="relative">
+                <div id="home-overview">
+                    <section class="max-w-[1060px] mx-auto w-full">
+                        <div id="global-notice-barrage" class="global-notice-barrage hidden" role="button" tabindex="0">
+                            <div class="global-notice-track">
+                                <button type="button" id="global-notice-text" class="global-notice-text"></button>
+                            </div>
+                            <button type="button" id="global-notice-open" class="global-notice-open">查看</button>
+                        </div>
+                        <header class="mb-14">
+                            <h1
+                                class="text-6xl xl:text-[80px] leading-[1.1] mb-4 font-serif text-[#2c2c2c] tracking-tight">
+                                <span id="greeting-text">你好</span>，<span id="overview-user-name">Julian</span>。</h1>
+                            <p id="greeting-subtitle" class="text-lg text-[#7a7a7a] font-medium tracking-wide">您的学术追求在等待着您。</p>
+                        </header>
+                        <section class="pt-2">
+                            <h2 class="text-2xl font-serif text-[#2c2c2c] mb-6">进行中的作业</h2>
+                            <div class="h-px bg-[#f0f0f0] mb-8"></div>
+                            <div id="subject-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                        </section>
+                    </section>
+                    <aside class="flex flex-col">
+                        <div class="flex items-center gap-3 mb-8">
+                            <svg class="w-5 h-5 text-[#2c2c2c]" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
+                                <path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z" />
+                            </svg>
+                            <h3 class="text-[17px] font-bold text-[#2c2c2c]">即将到期的任务</h3>
+                        </div>
+                        <div id="upcoming-list" class="space-y-1 text-sm text-[#5e6059] mb-6"></div>
+                        <a href="#" onclick="switchTab('history')"
+                            class="text-xs font-bold text-[#7a7a7a] hover:text-[#2c2c2c] transition-colors flex items-center gap-1">查看完整日历
+                            ➔</a>
+
+                        <!-- AI 助手 -->
+                        <div class="mt-5 pt-5 border-t border-[#e5e4e0]">
+                            <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-4 h-4 text-[#7a7a7a]" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path
+                                        d="M12 2a4 4 0 0 1 4 4v1a2 2 0 0 1 2 2v1a4 4 0 0 1-2 3.5V15a2 2 0 0 1-2 2h-1l-3 4-3-4H6a2 2 0 0 1-2-2v-1.5A4 4 0 0 1 2 10V9a2 2 0 0 1 2-2V6a4 4 0 0 1 4-4h4z">
+                                    </path>
+                                </svg>
+                                <span class="text-[11px] font-bold tracking-widest text-[#8a8a8a]">AI 助手</span>
+                            </div>
+                            <div id="ai-chat-list" class="space-y-2.5 pr-1 max-h-[280px] overflow-y-auto mb-3 text-sm">
+                            </div>
+                            <div class="flex gap-2">
+                                <input id="ai-chat-input" type="text"
+                                    class="glass-input w-full rounded-lg px-3 py-2 outline-none text-[12px]"
+                                    placeholder="输入问题...">
+                                <button onclick="sendAiChat()" id="ai-chat-send"
+                                    class="px-3 py-2 rounded-md bg-[#5f5f5f] text-white text-[11px] font-semibold hover:bg-[#525252] shrink-0">发送</button>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-8 border-t border-[#e5e4e0] lg:block hidden">
+                            <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-4 h-4 text-[#7a7a7a]" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 2C7.589 2 4 5.589 4 10c0 2.923 1.551 5.503 3.885 7.027.359.233.586.634.629 1.059.019.186.113 1.414 1.486 1.414h4c1.373 0 1.467-1.228 1.486-1.414.043-.425.27-.826.629-1.059C18.449 15.503 20 12.923 20 10c0-4.411-3.589-8-8-8zm-2 20h4c.148 0 .5-.058.5-.5s-.352-.5-.5-.5h-4c-.148 0-.5.058-.5.5s.352.5.5.5z" />
+                                </svg>
+                                <span class="text-[11px] font-bold tracking-widest text-[#8a8a8a]">每日沉思</span>
+                            </div>
+                            <p class="font-serif text-[19px] italic text-[#5c5c5c] leading-relaxed mb-4">
+                                "读书不是为了反驳和诘难；也不是为了轻信和盲从；更不是为了寻找谈资；而是为了权衡与思考。"</p>
+                            <p class="text-[11px] font-bold text-[#8a8a8a]">—— 弗朗西斯·培根</p>
+                        </div>
+                    </aside>
+                </div>
+
+                <div id="home-detail" class="hidden">
+                    <div class="mb-6">
+                        <button id="back-to-overview"
+                            class="px-3 py-1.5 rounded-md border border-[#d2d0c8] bg-[#f3f2eb] text-[#31332e] font-semibold text-sm hover:bg-[#eceae1]">←
+                            返回课程总览</button>
+                    </div>
+                    <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr),420px] gap-8 items-start">
+                        <article class="px-1">
+                            <div class="flex items-center gap-3 mb-6">
+                                <span id="detail-subject-badge"
+                                    class="bg-[#efeee7] text-[#5c614e] text-xs px-3 py-1 rounded-full font-semibold">科目</span>
+                                <span id="deadline-hint-inline" class="text-sm text-[#6e7068]"></span>
+                            </div>
+                            <h1 id="detail-title"
+                                class="text-5xl xl:text-7xl leading-[0.95] mb-6 font-serif text-[#1f221f]">作业提交</h1>
+                            <p id="detail-desc" class="text-2xl text-[#5e6059] mb-10 max-w-3xl">请在右侧上传文稿。</p>
+                            <div id="notice-card" class="rounded-xl">
+                                <h2 class="text-4xl font-serif text-[#1f221f] mb-3">作业要求</h2>
+                                <div class="h-px bg-[#d7d6cf] mb-6"></div>
+                                <h3 id="notice-title" class="text-xl font-medium text-[#31332e] mb-3"></h3>
+                                <div id="notice-content"
+                                    class="text-[#5e6059] text-base leading-relaxed whitespace-pre-line"></div>
+                            </div>
+                        </article>
+
+                        <div class="space-y-6">
+                            <div id="upload-card"
+                                class="rounded-[20px] p-8 sm:p-10 relative overflow-visible bg-white border-none shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
+                                <h2 class="text-3xl font-serif text-[#1f221f] mb-3">提交作业</h2>
+                                <p class="text-[#5e6059] mb-6">请将你的文稿放置此处以供审阅。</p>
+
+                                <form id="upload-form" class="space-y-6 relative z-10">
+                                    <select id="subject-folder" class="hidden">
+                                        <option value="" disabled selected></option>
+                                    </select>
+                                    <div id="custom-select-trigger" class="hidden"></div>
+                                    <div id="custom-select-dropdown" class="hidden"></div>
+                                    <span id="custom-select-text" class="hidden"></span>
+                                    <p id="deadline-hint" class="mt-2 text-xs text-amber-700 font-medium hidden"></p>
+                                    <p id="student-name-display" class="hidden">未登录</p>
+                                    <input type="hidden" id="student-name" value="">
+
+                                    <div id="sub-type-container"
+                                        class="hidden transition-all duration-300 transform scale-95 opacity-0">
+                                        <label for="sub-type"
+                                            class="block text-sm font-serif font-bold text-indigo-700 mb-1">作业单元 /
+                                            小类型</label>
+                                        <input type="text" id="sub-type"
+                                            class="glass-input block w-full rounded-xl px-4 py-3 outline-none transition hover:bg-white/40 focus:bg-white/50 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 placeholder-indigo-300 text-indigo-900"
+                                            placeholder="此科目要求详细分类（例如：第一单元等）">
+                                    </div>
+
+                                    <div class="pt-2 border-t border-[#d7d6cf]">
+                                        <label class="block text-sm font-medium font-serif mb-2">上传作业文件</label>
+                                        <div id="dropzone"
+                                            class="bg-[#f3f2eb] flex justify-center px-6 pt-12 pb-12 border-2 border-dashed border-[#c9c8c1] rounded-xl cursor-pointer hover:border-blue-400 hover:bg-[#eceae1] transition-all relative overflow-hidden group glow-capture glow-tilt">
+                                            <div class="pointer-events-none absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                                                style="background: radial-gradient(400px circle at var(--glow-x, -1000px) var(--glow-y, -1000px), rgba(96, 165, 250, 0.15), transparent 40%);">
+                                            </div>
+                                            <div class="space-y-2 text-center w-full relative z-10 pointer-events-none">
+                                                <span class="text-5xl block text-[#6f6f6f]">⤴</span>
+                                                <div
+                                                    class="flex flex-col sm:flex-row text-sm text-gray-800 justify-center items-center font-bold mt-2 gap-1 sm:gap-0">
+                                                    <span
+                                                        class="text-[#31332e] cursor-pointer font-serif whitespace-nowrap">选择文稿</span>
+                                                    <input id="file-upload" type="file" multiple class="sr-only">
+                                                    <p
+                                                        class="pl-1 font-serif text-[#6e7068] sm:text-[#5e6059] whitespace-nowrap">
+                                                        或拖放至此</p>
+                                                </div>
+                                                <p class="text-xs text-gray-600 mt-2 font-medium font-serif">单文件最大限<span id="upload-max-size-inline">95</span>MB
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <p id="precheck-tip" class="mt-2 text-xs text-gray-600 font-medium hidden"></p>
+                                        <ul id="file-list"
+                                            class="mt-4 space-y-2 text-sm text-gray-700 max-h-48 overflow-y-auto pr-2">
+                                        </ul>
+                                    </div>
+
+                                    <div id="progress-container"
+                                        class="hidden w-full transition-all duration-300 glass-input p-3 rounded-xl border border-white/50">
+                                        <div class="flex justify-between text-sm text-indigo-800 mb-2 font-bold"><span
+                                                id="progress-text" class="truncate pr-2">准备上传...</span><span
+                                                id="progress-percent" class="shrink-0">0%</span></div>
+                                        <div class="w-full bg-white/50 rounded-full h-2 shadow-inner overflow-hidden">
+                                            <div id="progress-bar"
+                                                class="bg-indigo-500 h-2 rounded-full transition-all duration-200"
+                                                style="width: 0%"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-2 border-t border-[#d7d6cf]">
+                                        <p class="text-xs font-semibold text-[#6e7068] mb-2">格式要求</p>
+                                        <div class="space-y-2 text-sm text-[#4f514a]">
+                                            <div class="flex justify-between"><span>文件类型</span><span
+                                                    id="upload-allowed-types" class="font-medium">按作业设置</span></div>
+                                            <div class="flex justify-between"><span>大小限制</span><span
+                                                    id="upload-max-size-text" class="font-medium">单文件 ≤ 95MB</span></div>
+                                            <div class="flex justify-between"><span>命名规则</span><span
+                                                    class="font-medium">按科目要求</span></div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" id="submit-btn"
+                                        class="w-full flex justify-center py-3.5 px-4 rounded-md text-base font-semibold text-[#f9f8f5] bg-[#5f5f5f] hover:bg-[#525252] border border-[#5f5f5f] transition-all">
+                                        提交文稿
+                                    </button>
+                                    <div id="receipt-box"
+                                        class="hidden glass-input rounded-xl p-3 text-xs text-indigo-900"></div>
+                                </form>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-history" class="hidden">
+                <header class="mb-10">
+                    <h1 class="text-5xl xl:text-6xl leading-[1.1] mb-3 font-serif text-[#2c2c2c] tracking-tight">提交历史
+                    </h1>
+                    <p class="text-[15px] text-[#7a7a7a] font-medium">这里记录当前姓名对应的提交历史。传错了可点击撤回。</p>
+                </header>
+                <div class="flex flex-wrap gap-2 mb-8 items-center">
+                    <input id="history-filter-subject" type="text"
+                        class="bg-white border border-[#e5e4e0] rounded-full px-4 py-2 text-[13px] outline-none focus:border-[#2c2c2c] transition-colors w-[140px]"
+                        placeholder="科目筛选">
+                    <input id="history-filter-date-from" type="date"
+                        class="bg-white border border-[#e5e4e0] rounded-full px-3 py-2 text-[13px] outline-none focus:border-[#2c2c2c] transition-colors w-[150px]">
+                    <span class="text-[#8a8a8a] text-sm">至</span>
+                    <input id="history-filter-date-to" type="date"
+                        class="bg-white border border-[#e5e4e0] rounded-full px-3 py-2 text-[13px] outline-none focus:border-[#2c2c2c] transition-colors w-[150px]">
+                </div>
+                <div class="flex items-center gap-3 mb-6">
+                    <label class="flex items-center gap-2 cursor-pointer select-none">
+                        <input type="checkbox" id="history-select-all" class="w-4 h-4 accent-[#2c2c2c] rounded"
+                            onchange="toggleSelectAllHistory()">
+                        <span class="text-[13px] font-medium text-[#5c5c5c]">全选</span>
+                    </label>
+                    <button id="history-batch-delete" onclick="batchDeleteHistory()"
+                        class="px-4 py-1.5 rounded-full bg-[#2c2c2c] text-[#f5f4ed] text-[12px] font-semibold hover:bg-[#1a1a1a] transition-colors hidden">批量撤回</button>
+                    <span id="history-selected-count" class="text-[12px] text-[#8a8a8a] hidden">已选 0 项</span>
+                </div>
+                <div class="h-px bg-[#e5e4e0] mb-6"></div>
+                <div id="history-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-4"
+                    style="transition: all 0.3s ease"></div>
+                <div id="history-empty" class="hidden text-center py-16">
+                    <p class="text-[#8a8a8a] font-serif text-lg">暂无提交记录</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="history-preview-modal" class="fixed inset-0 z-[115] hidden items-center justify-center p-4">
+            <div id="history-preview-backdrop" class="absolute inset-0 bg-[#2c2c2c]/30 backdrop-blur-sm"></div>
+            <article class="relative w-full max-w-[1120px] h-[82vh] rounded-[22px] bg-[#fbf9f4] border border-[#e5e4e0] shadow-[0_24px_64px_rgba(49,51,46,0.16)] overflow-hidden flex flex-col">
+                <header class="h-16 px-5 sm:px-6 border-b border-[#e5e4e0] flex items-center justify-between gap-4 bg-[#fbf9f4]">
+                    <div class="min-w-0">
+                        <p class="text-[10px] font-bold tracking-widest uppercase text-[#8a8a8a]">Preview</p>
+                        <h2 id="history-preview-title" class="text-lg font-serif font-bold text-[#2c2c2c] truncate">文件预览</h2>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <a id="history-preview-download" href="#" target="_blank" rel="noopener noreferrer"
+                            class="px-3 py-2 rounded-lg bg-white text-[#5e6059] border border-[#e5e4e0] text-xs font-bold hover:bg-[#efece1] transition">下载</a>
+                        <button type="button" onclick="closeHistoryPreview()"
+                            class="w-9 h-9 rounded-full border border-[#e5e4e0] bg-white text-[#7a7a7a] hover:text-[#2c2c2c] hover:bg-[#efece1] transition flex items-center justify-center"
+                            title="关闭预览">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </header>
+                <div id="history-preview-body" class="flex-1 min-h-0 bg-white"></div>
+            </article>
+        </div>
+
+        <div id="page-about" class="hidden w-full">
+            <div class="glass rounded-3xl p-6 sm:p-10 shadow-2xl text-center">
+                <img src="https://imgbed.306421.xyz/file/头像/1773470300747_Image_1773470180129.webp" alt="作者头像"
+                    class="w-24 h-24 mx-auto rounded-full shadow-lg object-cover mb-6 border-4 border-white/60">
+                <h2 class="text-2xl font-extrabold text-gray-900 mb-2 font-serif">关于作者</h2>
+                <p class="text-indigo-700 font-bold mb-6 font-serif">致力于全栈开发与人工智能探索的实干派</p>
+                <div
+                    class="text-left space-y-4 text-gray-800 bg-white/40 backdrop-blur-md p-6 rounded-2xl border border-white/60 shadow-sm font-medium font-serif">
+                    <p>👋 你好！我是本系统的开发者YU，也是大家的学习委员。为了能让大家摆脱群收作业的混乱，拥有一个丝滑、稳定的提交体验，我利用业余时间开发了这个 Serverless 架构的收集系统。</p>
+                    <p>🚀 <strong>技术栈：</strong> 前端采用 HTML5 + Tailwind CSS (纯液态玻璃抽屉式交互)，后端依托 Cloudflare Pages Functions
+                        与全球分布式的 R2 对象存储，确保极速上传。</p>
+                    <p>💡 如果你在使用中遇到 Bug 或有改进建议，欢迎随时向我反馈，嘻嘻~</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="mobile-assist-shell" aria-label="移动助手">
+        <div id="mobile-assist-panel" class="mobile-assist-panel" aria-live="polite">
+            <div class="mobile-assist-panel-head">
+                <div>
+                    <p id="mobile-assist-kicker">Assistant</p>
+                    <h3 id="mobile-assist-title">AI 助手</h3>
+                </div>
+                <button type="button" class="mobile-assist-close" onclick="closeMobileAssistPanel()" aria-label="关闭">×</button>
+            </div>
+            <div id="mobile-assist-tasks" class="mobile-assist-pane hidden">
+                <div id="mobile-upcoming-list" class="mobile-upcoming-list"></div>
+            </div>
+            <div id="mobile-assist-ai" class="mobile-assist-pane">
+                <div id="mobile-ai-chat-list" class="mobile-ai-chat-list"></div>
+                <div class="mobile-ai-input-row">
+                    <input id="mobile-ai-chat-input" type="text" placeholder="输入问题...">
+                    <button id="mobile-ai-chat-send" type="button" onclick="sendAiChat('mobile')">发送</button>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-assist-capsule">
+            <button id="mobile-assist-tasks-btn" type="button" onclick="toggleMobileAssistPanel('tasks')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                到期
+            </button>
+            <button id="mobile-assist-ai-btn" type="button" onclick="toggleMobileAssistPanel('ai')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2a4 4 0 0 1 4 4v1a2 2 0 0 1 2 2v1a4 4 0 0 1-2 3.5V15a2 2 0 0 1-2 2h-1l-3 4-3-4H6a2 2 0 0 1-2-2v-1.5A4 4 0 0 1 2 10V9a2 2 0 0 1 2-2V6a4 4 0 0 1 4-4h4z"></path>
+                </svg>
+                AI
+            </button>
+        </div>
+    </div>
+
+    <button id="btt-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+        class="fixed bottom-8 right-4 sm:right-8 z-40 p-3 sm:p-3.5 rounded-2xl glass shadow-xl transition-all duration-500 transform translate-y-20 opacity-0 pointer-events-none hover:bg-white/70 hover:scale-110 group cursor-pointer">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-800 group-hover:-translate-y-1 transition-transform" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7" />
+        </svg>
+    </button>
+
+
+
+    <script src="./assets/index-main.js"></script>
+
+    <script src="./assets/index-part-3.js"></script>
+</body>
+
+</html>

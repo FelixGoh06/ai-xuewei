@@ -1,0 +1,21 @@
+# Copy this file to .dev.vars for local development.
+# Never commit real secrets.
+
+ADMIN_SESSION_SECRET=replace-with-a-long-random-secret
+DELETE_TOKEN_SECRET=replace-with-a-long-random-secret
+STUDENT_SESSION_SECRET=replace-with-a-long-random-secret
+
+# JSON object: {"username":"password"}
+ADMIN_USERS={"admin":"replace-with-a-strong-password"}
+
+# Comma-separated lists.
+COMPLEX_SUBJECTS=
+ALLOWED_NAMES=
+ALLOWED_EXTENSIONS=.pdf,.doc,.docx,.jpg,.jpeg,.png,.zip
+
+# Optional AI integration.
+OPENAI_API_KEY=
+AI_BASE_URL=https://api.openai.com/v1
+AI_LIGHT_MODEL=
+AI_HEAVY_MODEL=
+AI_TIMEOUT_MS=20000

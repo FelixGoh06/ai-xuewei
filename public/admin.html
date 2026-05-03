@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI学委 管理中心</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300..800&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <script src="./tailwind.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <link rel="stylesheet" href="./assets/admin.css">
+  <script src="./assets/admin-head.js"></script>
+</head>
+
+<body class="min-h-screen bg-fixed font-sans text-gray-800">
+
+  <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/40 backdrop-blur-xl">
+    <div class="glass rounded-3xl p-8 sm:p-10 max-w-sm w-full mx-4 text-center">
+      <img src="https://imgbed.306421.xyz/file/svg/1777727759648_file.svg"
+        class="w-16 h-16 mx-auto mb-4 object-contain">
+      <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">Admin</h2>
+      <input type="text" id="admin-user" placeholder="管理员账号"
+        class="glass-input block w-full rounded-xl px-4 py-3 mb-4 text-center font-bold tracking-widest text-gray-800 outline-none">
+      <input type="password" id="admin-pwd" placeholder="管理员密码"
+        class="glass-input block w-full rounded-xl px-4 py-3 mb-6 text-center font-bold tracking-widest text-gray-800 outline-none">
+      <button onclick="login()" id="login-btn"
+        class="w-full py-3 rounded-xl text-white font-bold bg-emerald-500 hover:bg-emerald-600 transition-all">安全登录</button>
+      <p id="login-err" class="text-red-500 text-sm mt-3 hidden font-bold">账号或密码错误！</p>
+    </div>
+  </div>
+
+  <aside id="admin-sidebar"
+    class="fixed top-0 left-0 w-full lg:w-[260px] lg:h-screen bg-[#fbf9f4] lg:bg-[#efece1]/30 backdrop-blur-md border-b lg:border-b-0 lg:border-r border-[#e5e4e0] px-4 lg:px-6 py-4 lg:py-8 flex flex-col justify-between items-stretch z-40 hidden transition-all">
+    <div class="flex items-center justify-between lg:block lg:mb-12">
+      <div>
+        <h1 class="text-xl lg:text-2xl font-serif text-[#2c2c2c] italic whitespace-nowrap">AI 学委</h1>
+        <p class="text-[10px] tracking-widest text-[#7a7a7a] lg:mt-1 font-bold">ADMIN WORKSPACE</p>
+      </div>
+      <button class="lg:hidden p-2 text-[#5e6059]"
+        onclick="document.getElementById('sidebar-menu').classList.toggle('hidden')">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div id="sidebar-menu"
+      class="hidden lg:flex flex-col gap-2 flex-1 absolute lg:static top-full left-0 w-full lg:w-auto bg-[#fbf9f4] lg:bg-transparent border-b lg:border-none border-[#e5e4e0] p-4 lg:p-0 shadow-lg lg:shadow-none">
+      <button onclick="switchAdminView('dashboard')" data-admin-nav="dashboard"
+        class="text-left px-3 py-2.5 rounded-lg bg-[#e4e1d5] text-[#2c2c2c] text-xs font-bold flex items-center gap-3 shadow-sm">
+        <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
+          <line x1="9" y1="21" x2="9" y2="9"></line>
+        </svg>
+        总览
+      </button>
+      <button onclick="openNoticeModal()" data-admin-nav="notice"
+        class="text-left px-3 py-2.5 rounded-lg text-[#5e6059] hover:bg-[#e4e1d5]/50 text-xs font-bold transition-colors flex items-center gap-3">
+        <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"></path>
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+        </svg>
+        修改公告
+      </button>
+      <button onclick="openStudentsModal()" data-admin-nav="students"
+        class="text-left px-3 py-2.5 rounded-lg text-[#5e6059] hover:bg-[#e4e1d5]/50 text-xs font-bold transition-colors flex items-center gap-3">
+        <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        学生库
+      </button>
+      <button onclick="openAiRulesModal('')" data-admin-nav="ai-rules"
+        class="text-left px-3 py-2.5 rounded-lg text-[#5e6059] hover:bg-[#e4e1d5]/50 text-xs font-bold transition-colors flex items-center gap-3">
+        <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path
+            d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z">
+          </path>
+          <path
+            d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z">
+          </path>
+        </svg>
+        全局 AI 规则
+      </button>
+      <button onclick="openModelSettingsModal()" data-admin-nav="model-settings"
+        class="text-left px-3 py-2.5 rounded-lg text-[#5e6059] hover:bg-[#e4e1d5]/50 text-xs font-bold transition-colors flex items-center gap-3">
+        <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"></path>
+          <path d="M4 4h16v12H4z"></path>
+          <path d="M8 20h4"></path>
+        </svg>
+        模型配置
+      </button>
+      <button onclick="openAuditModal()" data-admin-nav="audit"
+        class="text-left px-3 py-2.5 rounded-lg text-[#5e6059] hover:bg-[#e4e1d5]/50 text-xs font-bold transition-colors flex items-center gap-3">
+        <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="8" y1="6" x2="21" y2="6"></line>
+          <line x1="8" y1="12" x2="21" y2="12"></line>
+          <line x1="8" y1="18" x2="21" y2="18"></line>
+          <line x1="3" y1="6" x2="3.01" y2="6"></line>
+          <line x1="3" y1="12" x2="3.01" y2="12"></line>
+          <line x1="3" y1="18" x2="3.01" y2="18"></line>
+        </svg>
+        审计日志
+      </button>
+
+      <div class="lg:mt-auto flex flex-col gap-2 pt-6 lg:border-t border-[#e5e4e0]">
+        <button onclick="document.getElementById('add-modal').classList.remove('hidden')"
+          class="w-full py-2.5 bg-[#2c2c2c] hover:bg-[#4a4b46] text-white text-xs font-bold rounded-lg transition shadow-md flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          新增科目
+        </button>
+        <button onclick="window.location.href='/'"
+          class="text-left px-3 py-2.5 text-[#5e6059] hover:text-[#2c2c2c] text-xs font-bold transition-colors flex items-center gap-3 mt-4">
+          <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          前端展示
+        </button>
+        <button onclick="logout()"
+          class="text-left px-3 py-2.5 text-[#7f2b35] hover:bg-[#f4e2e2] rounded-lg text-xs font-bold transition-colors flex items-center gap-3">
+          <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          退出登录
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <div id="admin-dashboard" class="hidden lg:ml-[260px] pt-20 lg:pt-0 min-h-screen">
+    <div class="admin-shell-layout max-w-[1680px] mx-auto px-4 sm:px-8 lg:px-12 py-8 lg:py-16">
+      <main class="admin-main-column">
+
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
+        <div>
+          <p class="text-[11px] font-bold tracking-widest text-[#8a8a8a] uppercase">Faculty Dashboard</p>
+          <h1 class="text-4xl lg:text-5xl font-serif text-[#2c2c2c] mt-2 mb-3">作业池概览</h1>
+          <p class="text-sm text-[#7a7a7a] font-medium">管理所有的课程作业和学生提交记录。</p>
+        </div>
+        <div class="flex items-center gap-4 shrink-0 bg-white px-4 py-2 rounded-2xl border border-[#e5e4e0] shadow-sm">
+          <img src="https://imgbed.306421.xyz/file/ico/1771604448679_ico_betav2.svg"
+            class="w-8 h-8 rounded-full bg-[#efece1] p-1 border border-[#e5e4e0] shadow-sm">
+          <span id="welcome-msg" class="text-sm font-bold text-[#5e6059]"></span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="bg-white border border-[#e5e4e0] rounded-2xl p-6 shadow-sm hover:shadow-md transition">
+          <p class="text-[10px] font-bold tracking-widest text-[#8a8a8a] uppercase mb-4">当前科目数</p>
+          <div class="flex items-end gap-2">
+            <span class="text-5xl font-serif text-[#2c2c2c]" id="stat-active-folders">-</span>
+            <span class="text-sm text-[#7a7a7a] mb-1">个</span>
+          </div>
+        </div>
+        <div class="bg-[#efece1]/40 border border-[#e5e4e0] rounded-2xl p-6 shadow-sm hover:shadow-md transition">
+          <p class="text-[10px] font-bold tracking-widest text-[#8a8a8a] uppercase mb-4">总提交率</p>
+          <div class="flex items-center gap-5">
+            <div id="stat-submit-pie"
+              class="relative w-24 h-24 rounded-full bg-[#e5e4e0] shadow-inner shrink-0"
+              style="background: conic-gradient(#5c614e 0deg, #e5e4e0 0deg);">
+              <div class="absolute inset-[13px] rounded-full bg-[#fbf9f4] border border-[#e5e4e0] flex items-center justify-center">
+                <span id="stat-submit-rate" class="text-2xl font-serif text-[#2c2c2c]">0%</span>
+              </div>
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-end gap-2">
+                <span id="stat-submit-count" class="text-4xl font-serif text-[#2c2c2c]">0</span>
+                <span id="stat-submit-total" class="text-sm text-[#7a7a7a] mb-1">/ 0</span>
+              </div>
+              <p class="text-[11px] text-[#8a8a8a] font-medium mt-1">所有作业累计提交</p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white border border-[#e5e4e0] rounded-2xl p-6 shadow-sm hover:shadow-md transition">
+          <p class="text-[10px] font-bold tracking-widest text-[#8a8a8a] uppercase mb-4">学生库人数</p>
+          <div class="flex items-end gap-2">
+            <span class="text-5xl font-serif text-[#2c2c2c]" id="stat-student-count">-</span>
+            <span class="text-sm text-[#7a7a7a] mb-1">人</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-end mb-6 border-b border-[#e5e4e0] pb-4">
+        <h2 class="text-2xl font-serif text-[#2c2c2c]">全部科目 (Assignments)</h2>
+      </div>
+
+      <div id="subject-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full"></div>
+      <div id="subject-empty"
+        class="hidden text-center p-12 text-[#8a8a8a] font-bold bg-white border border-[#e5e4e0] rounded-2xl mt-4">
+        仓库为空，点击侧边栏“新增科目”</div>
+      <div id="subject-loading"
+        class="hidden text-center p-12 text-[#8a8a8a] font-bold bg-white border border-[#e5e4e0] rounded-2xl mt-4">
+        正在拉取真实数据...</div>
+      </main>
+      <aside class="admin-assistant-panel">
+        <div class="admin-assistant-head">
+          <div>
+            <p>Admin AI</p>
+            <h2>后台 AI 助手</h2>
+          </div>
+          <span>可操作</span>
+        </div>
+        <div id="admin-ai-chat-list" class="admin-ai-chat-list">
+          <div class="admin-ai-msg assistant">你好，我熟悉后台入口，也可以帮你查询提交情况、添加或删除学生。</div>
+        </div>
+        <div class="admin-ai-quick">
+          <button onclick="askAdminAssistant('学生库在哪里')">学生库入口</button>
+          <button onclick="askAdminAssistant('查询 test 提交情况')">查提交</button>
+          <button onclick="askAdminAssistant('模型配置在哪里')">模型配置</button>
+        </div>
+        <div class="admin-ai-input-row">
+          <input id="admin-ai-chat-input" placeholder="输入后台操作或问题...">
+          <button id="admin-ai-chat-send" onclick="sendAdminAssistant()">发送</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div id="explorer-modal"
+    class="fixed inset-0 z-50 hidden bg-[#fbf9f4] transition-all duration-300 flex flex-col overflow-y-auto md:overflow-hidden">
+    <div
+      class="px-4 sm:px-8 py-4 lg:py-6 bg-white shadow-sm flex justify-between items-center border-b border-[#e5e4e0] sticky top-0 z-10 gap-4">
+      <h2 id="explorer-title" class="text-xl sm:text-3xl font-serif font-bold text-[#2c2c2c] break-all">科目详情</h2>
+      <button onclick="document.getElementById('explorer-modal').classList.add('hidden')"
+        class="px-4 py-2 rounded-xl bg-white hover:bg-[#efece1] text-[#2c2c2c] text-sm font-bold border border-[#e5e4e0] shadow-sm whitespace-nowrap shrink-0 transition-colors">←
+        返回概览</button>
+    </div>
+
+    <div class="flex-1 flex flex-col md:flex-row w-full mx-auto md:overflow-hidden bg-[#fbf9f4]">
+      <!-- Explorer Sidebar (Tab Navigation) -->
+      <div
+        class="w-full md:w-[240px] bg-[#fbf9f4] border-r border-[#e5e4e0] flex flex-col shrink-0 p-4 sm:p-6 gap-2 overflow-y-auto">
+        <p class="text-[10px] font-bold tracking-widest text-[#8a8a8a] uppercase mb-2 px-2">功能导航</p>
+
+        <button onclick="switchExplorerTab('files')" id="tab-btn-files"
+          class="text-left px-3 py-2.5 rounded-lg bg-[#e4e1d5] text-[#2c2c2c] text-xs font-bold flex items-center gap-3 transition-colors shadow-sm">
+          <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+          云端文件目录
+        </button>
+
+        <button onclick="switchExplorerTab('roster')" id="tab-btn-roster"
+          class="text-left px-3 py-2.5 rounded-lg text-[#5e6059] hover:bg-[#e4e1d5]/50 text-xs font-bold transition-colors flex items-center gap-3">
+          <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          名单核对与催交
+        </button>
+
+        <button onclick="switchExplorerTab('grading')" id="tab-btn-grading"
+          class="text-left px-3 py-2.5 rounded-lg text-[#5e6059] hover:bg-[#e4e1d5]/50 text-xs font-bold transition-colors flex items-center gap-3">
+          <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+          </svg>
+          批量评分与评语
+        </button>
+
+        <button onclick="switchExplorerTab('automation')" id="tab-btn-automation"
+          class="text-left px-3 py-2.5 rounded-lg text-[#5e6059] hover:bg-[#e4e1d5]/50 text-xs font-bold transition-colors flex items-center gap-3">
+          <svg class="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+            </path>
+          </svg>
+          自动化与例外规则
+        </button>
+      </div>
+
+      <!-- Content Area -->
+      <div class="flex-1 p-4 sm:p-8 overflow-y-auto max-w-[1200px] w-full mx-auto relative">
+
+        <!-- Tab: Files (Default) -->
+        <div id="explorer-tab-files" class="h-full flex flex-col">
+          <div class="bg-white border border-[#e5e4e0] shadow-sm rounded-2xl p-5 sm:p-6 flex flex-col flex-1">
+            <div class="mb-5 border-b border-[#e5e4e0] pb-4 shrink-0 space-y-4">
+              <div class="flex justify-between items-center gap-2">
+                <h3 class="text-lg font-serif font-bold text-[#2c2c2c]">云端文件目录</h3>
+                <span
+                  class="text-[11px] text-[#7a7a7a] font-bold uppercase tracking-widest bg-[#fbf9f4] border border-[#e5e4e0] px-2.5 py-1 rounded-full"
+                  id="file-count">加载中...</span>
+              </div>
+              <div class="flex gap-3">
+                <div class="relative w-full">
+                  <svg class="w-4 h-4 text-[#8a8a8a] absolute left-3 top-1/2 -translate-y-1/2" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input id="explorer-search" type="text" placeholder="搜索文件名/提交人/回执码..."
+                    class="w-full rounded-lg pl-9 pr-4 py-2 text-[11px] outline-none bg-[#fbf9f4] border border-[#e5e4e0] focus:border-[#5c614e] transition-colors">
+                </div>
+                <button onclick="exportCurrentSubjectCsv()"
+                  class="px-4 py-2 rounded-lg text-[11px] font-bold bg-[#efece1] text-[#2c2c2c] border border-[#e5e4e0] hover:bg-[#e4e1d5] transition whitespace-nowrap shadow-sm">导出
+                  CSV</button>
+              </div>
+              <div class="flex gap-2">
+                <button id="view-mode-folder-btn" onclick="setExplorerViewMode('folder')"
+                  class="px-3 py-1.5 rounded-md text-[11px] font-bold bg-[#2c2c2c] text-white border border-[#2c2c2c] flex items-center gap-1.5 transition shadow-sm">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  按人名文件夹
+                </button>
+                <button id="view-mode-flat-btn" onclick="setExplorerViewMode('flat')"
+                  class="px-3 py-1.5 rounded-md text-[11px] font-bold bg-white text-[#5e6059] border border-[#e5e4e0] hover:bg-[#fbf9f4] flex items-center gap-1.5 transition">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  </svg>
+                  平铺文件
+                </button>
+              </div>
+            </div>
+            <div class="flex-1 overflow-y-auto pr-1 sm:pr-2">
+              <div id="explorer-file-list" class="space-y-3"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Roster -->
+        <div id="explorer-tab-roster" class="hidden h-full flex flex-col gap-6">
+          <div class="bg-white border border-[#e5e4e0] shadow-sm rounded-2xl p-5 sm:p-6">
+            <h3 class="text-lg font-serif font-bold text-[#2c2c2c] mb-5 pb-2 border-b border-[#e5e4e0]">名单核对与导出</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <p class="text-[11px] font-bold text-[#7f2b35] mb-3 flex justify-between uppercase tracking-widest">
+                  <span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg> 尚未提交</span><span id="missing-count">0 人</span>
+                </p>
+                <div id="missing-list" class="flex flex-wrap gap-1.5"></div>
+              </div>
+              <div>
+                <p class="text-[11px] font-bold text-[#5c614e] mb-3 flex justify-between uppercase tracking-widest">
+                  <span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg> 已经提交</span><span id="submitted-count">0 人</span>
+                </p>
+                <div id="submitted-list" class="flex flex-wrap gap-1.5"></div>
+              </div>
+            </div>
+            <div class="mt-8 pt-5 border-t border-[#e5e4e0]">
+              <button onclick="exportRosterExcel()"
+                class="px-5 py-2.5 rounded-lg text-[11px] font-bold bg-[#efece1] text-[#2c2c2c] border border-[#e5e4e0] hover:bg-[#e4e1d5] transition shadow-sm">导出考勤与提交名单
+                Excel</button>
+            </div>
+          </div>
+
+          <div class="bg-white border border-[#e5e4e0] shadow-sm rounded-2xl p-5 sm:p-6">
+            <h3 class="text-lg font-serif font-bold text-[#2c2c2c] mb-5 pb-2 border-b border-[#e5e4e0]">自动催交 (AI
+              Reminders)</h3>
+            <div class="flex gap-2 mb-3">
+              <button onclick="generateAiReminder('friendly')"
+                class="px-5 py-2 rounded-lg text-[11px] font-bold bg-[#fbf9f4] text-[#5e6059] border border-[#e5e4e0] hover:bg-[#efece1] transition shadow-sm">生成温和催交文本</button>
+              <button onclick="generateAiReminder('strict')"
+                class="px-5 py-2 rounded-lg text-[11px] font-bold bg-white text-[#7f2b35] border border-[#f4e2e2] hover:bg-[#f4e2e2] transition shadow-sm">生成严肃催交文本</button>
+            </div>
+            <textarea id="ai-reminder-text" rows="4"
+              class="w-full rounded-lg px-4 py-3 text-[11px] outline-none bg-[#fbf9f4] border border-[#e5e4e0] text-[#2c2c2c] focus:border-[#5c614e] resize-none"
+              placeholder="AI 催交通知将在这里生成，你可以直接复制发送到班级群里..."></textarea>
+          </div>
+        </div>
+
+        <!-- Tab: Grading -->
+        <div id="explorer-tab-grading" class="hidden h-full flex flex-col">
+          <div class="bg-white border border-[#e5e4e0] shadow-sm rounded-2xl p-5 sm:p-6 flex flex-col flex-1">
+            <h3 class="text-lg font-serif font-bold text-[#2c2c2c] mb-5 pb-2 border-b border-[#e5e4e0] shrink-0">批量评分
+              (Grading)</h3>
+            <div class="flex gap-2 mb-5 shrink-0">
+              <button onclick="generateAiGradeDrafts()"
+                class="px-4 py-2 rounded-lg text-[11px] font-bold bg-[#fbf9f4] text-[#5e6059] border border-[#e5e4e0] hover:bg-[#efece1] transition shadow-sm">AI
+                生成空评语模板</button>
+              <button onclick="saveGrades()"
+                class="px-4 py-2 rounded-lg text-[11px] font-bold bg-[#2c2c2c] text-white shadow-sm hover:bg-[#4a4b46] transition ml-auto">批量保存评分</button>
+            </div>
+            <div id="grading-list" class="space-y-2 flex-1 overflow-y-auto pr-2"></div>
+          </div>
+        </div>
+
+        <!-- Tab: Automation -->
+        <div id="explorer-tab-automation" class="hidden h-full flex flex-col gap-6">
+          <div class="bg-white border border-[#e5e4e0] shadow-sm rounded-2xl p-5 sm:p-6">
+            <h3 class="text-lg font-serif font-bold text-[#2c2c2c] mb-5 pb-2 border-b border-[#e5e4e0]">作业要求
+              (Requirement)</h3>
+            <p class="text-[11px] text-[#8a8a8a] mb-4">这里填写的内容会显示在学生端该作业提交页左侧，不再使用全局公告。</p>
+            <textarea id="assignment-requirement-input" rows="8"
+              class="w-full rounded-lg px-4 py-3 text-[12px] outline-none bg-[#fbf9f4] border border-[#e5e4e0] text-[#2c2c2c] focus:border-[#5c614e] resize-y"
+              placeholder="例如：&#10;1. 阅读材料 A，并完成 1200 字分析。&#10;2. 文件格式：PDF 或 DOCX。&#10;3. 命名格式：学号-姓名-作业名。&#10;4. 截止后默认不接收补交。"></textarea>
+            <div class="flex items-center justify-between gap-3 mt-3">
+              <p id="assignment-requirement-status" class="text-[11px] text-[#8a8a8a]"></p>
+              <button onclick="saveAssignmentRequirement()" id="btn-save-assignment-requirement"
+                class="px-5 py-2.5 rounded-lg text-[11px] font-bold bg-[#2c2c2c] text-white shadow-sm hover:bg-[#4a4b46] transition">保存作业要求</button>
+            </div>
+          </div>
+
+          <div class="bg-white border border-[#e5e4e0] shadow-sm rounded-2xl p-5 sm:p-6">
+            <h3 class="text-lg font-serif font-bold text-[#2c2c2c] mb-5 pb-2 border-b border-[#e5e4e0]">命名模板 (Naming
+              Rule)</h3>
+            <p class="text-[11px] text-[#8a8a8a] mb-4">强制学生在提交文件时使用特定的命名格式。系统将自动校验，不符合规则的文件将被拒收。</p>
+            <input id="naming-template-input" type="text"
+              class="w-full rounded-lg px-4 py-3 text-[11px] outline-none bg-[#fbf9f4] border border-[#e5e4e0] focus:border-[#5c614e] mb-2 font-mono"
+              placeholder="例：实验三{name}{studentId}{className}">
+            <p class="text-[10px] text-[#8a8a8a] mb-4">支持占位符：{name} (姓名) | {studentId} (学号) | {className} (班级) |
+              {subject} (科目名) | {originalBase} (原文件名)</p>
+            <button onclick="saveNamingRule()"
+              class="px-5 py-2.5 rounded-lg text-[11px] font-bold bg-[#2c2c2c] text-white shadow-sm hover:bg-[#4a4b46] transition">保存命名规则</button>
+          </div>
+
+          <div class="bg-white border border-[#e5e4e0] shadow-sm rounded-2xl p-5 sm:p-6">
+            <h3 class="text-lg font-serif font-bold text-[#2c2c2c] mb-5 pb-2 border-b border-[#e5e4e0]">作业提交规则
+              (Submission Rules)</h3>
+            <p class="text-[11px] text-[#8a8a8a] mb-4">按当前作业单独限制文件后缀和查重方式；留空则使用服务端默认后缀。</p>
+            <label class="block text-[11px] font-bold text-[#5e6059] mb-2">允许文件后缀</label>
+            <input id="subject-extensions-input" type="text"
+              class="w-full rounded-lg px-4 py-3 text-[11px] outline-none bg-[#fbf9f4] border border-[#e5e4e0] focus:border-[#5c614e] mb-4 font-mono"
+              placeholder=".pdf,.doc,.docx,.jpg,.png,.zip">
+            <label class="block text-[11px] font-bold text-[#5e6059] mb-2">查重方式</label>
+            <select id="subject-plagiarism-mode"
+              class="w-full rounded-lg px-4 py-3 text-[11px] outline-none bg-[#fbf9f4] border border-[#e5e4e0] focus:border-[#5c614e] mb-4">
+              <option value="normal">普通查重（省成本）</option>
+              <option value="embedding">Embedding 查重（需配置模型）</option>
+              <option value="auto">自动模式（上传后自动查）</option>
+            </select>
+            <label class="block text-[11px] font-bold text-[#5e6059] mb-2">适用班级</label>
+            <select id="subject-class-select" multiple
+              class="w-full min-h-[96px] rounded-lg px-4 py-3 text-[11px] outline-none bg-[#fbf9f4] border border-[#e5e4e0] focus:border-[#5c614e] mb-2"></select>
+            <p class="text-[10px] text-[#8a8a8a] mb-4">不选择表示该作业面向全部班级；按住 Ctrl / Command 可多选。</p>
+            <div class="flex items-center justify-between gap-3">
+              <p id="subject-settings-status" class="text-[11px] text-[#8a8a8a]"></p>
+              <button onclick="saveSubjectSettings()" id="btn-save-subject-settings"
+                class="px-5 py-2.5 rounded-lg text-[11px] font-bold bg-[#2c2c2c] text-white shadow-sm hover:bg-[#4a4b46] transition">保存提交规则</button>
+            </div>
+          </div>
+
+          <div class="bg-white border border-[#e5e4e0] shadow-sm rounded-2xl p-5 sm:p-6">
+            <h3 class="text-lg font-serif font-bold text-[#2c2c2c] mb-5 pb-2 border-b border-[#e5e4e0]">例外放行名单
+              (Exemptions)</h3>
+            <p class="text-[11px] text-[#8a8a8a] mb-4">截止时间过后，仍允许以下名单内的学生进行提交（如因病请假等情况）。</p>
+            <div class="flex gap-2 mb-4">
+              <input id="exempt-name-input" type="text"
+                class="w-64 rounded-lg px-4 py-2 text-[11px] outline-none bg-[#fbf9f4] border border-[#e5e4e0] focus:border-[#5c614e]"
+                placeholder="输入允许放行的学生姓名">
+              <button onclick="addExemption()"
+                class="px-4 py-2 rounded-lg text-[11px] font-bold bg-white text-[#5c614e] border border-[#e5e4e0] hover:bg-[#efece1] transition shadow-sm">添加例外</button>
+            </div>
+            <div id="exemptions-list"
+              class="flex flex-wrap gap-1.5 p-4 bg-[#fbf9f4] rounded-xl border border-[#e5e4e0] min-h-[60px]"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div id="notice-modal"
+    class="fixed inset-0 z-[60] hidden flex items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4">
+    <div class="glass rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl">
+      <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-4">📝 编辑最新公告</h3>
+      <input type="text" id="edit-notice-title"
+        class="glass-input w-full rounded-xl px-4 py-3 mb-4 outline-none focus:ring-2 focus:ring-emerald-200"
+        placeholder="公告标题">
+      <textarea id="edit-notice-content" rows="5"
+        class="glass-input w-full rounded-xl px-4 py-3 mb-6 outline-none focus:ring-2 focus:ring-emerald-200 resize-none"
+        placeholder="写点什么告诉同学们吧..."></textarea>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-6">
+        <div>
+          <label class="text-xs text-gray-600 font-bold">定时发布</label>
+          <input type="datetime-local" id="edit-notice-publish"
+            class="glass-input w-full rounded-xl px-3 py-2 outline-none">
+        </div>
+        <div>
+          <label class="text-xs text-gray-600 font-bold">过期时间</label>
+          <input type="datetime-local" id="edit-notice-expire"
+            class="glass-input w-full rounded-xl px-3 py-2 outline-none">
+        </div>
+      </div>
+      <div class="flex space-x-3 sm:space-x-4">
+        <button onclick="closeNoticeModal()"
+          class="flex-1 py-2.5 sm:py-3 rounded-xl font-bold text-gray-600 bg-white/50 hover:bg-white/80">取消</button>
+        <button onclick="saveNotice()" id="btn-save-notice"
+          class="flex-1 py-2.5 sm:py-3 rounded-xl font-bold text-white bg-emerald-500 hover:bg-emerald-600 whitespace-nowrap">保存发布</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="ai-rules-modal"
+    class="fixed inset-0 z-[65] hidden flex items-center justify-center bg-gray-900/45 backdrop-blur-sm p-4">
+    <div class="glass rounded-3xl p-6 sm:p-8 max-w-3xl w-full shadow-2xl">
+      <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-4">🧠 AI 问答规则库</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+        <div>
+          <label class="text-xs text-gray-600 font-bold">作用科目（留空=全局）</label>
+          <input type="text" id="ai-rules-subject" class="glass-input w-full rounded-xl px-3 py-2 outline-none"
+            placeholder="例如：高数作业1">
+        </div>
+        <div class="flex items-end gap-2">
+          <button onclick="loadAiRules()"
+            class="w-full px-3 py-2 rounded-xl bg-white/70 text-gray-700 font-bold border border-white/80">读取</button>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="text-xs text-gray-600 font-bold">作业要求（结构化，AI优先依据）</label>
+        <textarea id="ai-rules-instruction" rows="6"
+          class="glass-input w-full rounded-xl px-3 py-2 outline-none resize-none"
+          placeholder="每条一行：\n1. 字数 1500-2000\n2. 格式 PDF\n3. 命名 学号-姓名-作业1\n4. 截止后不接收补交"></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="text-xs text-gray-600 font-bold">FAQ（常见问答，按行填写）</label>
+        <textarea id="ai-rules-faq" rows="5" class="glass-input w-full rounded-xl px-3 py-2 outline-none resize-none"
+          placeholder="Q: 可以交Word吗？ A: 可以，但建议PDF。\nQ: 可以补交吗？ A: 默认不可以。"></textarea>
+      </div>
+      <div class="mb-4">
+        <label class="text-xs text-gray-600 font-bold">示例（命名/提交样例）</label>
+        <textarea id="ai-rules-examples" rows="4"
+          class="glass-input w-full rounded-xl px-3 py-2 outline-none resize-none"
+          placeholder="示例命名：实验八-20240101-张三-2024级人工智能1班.pdf\n示例提问：我现在这份命名符合要求吗？"></textarea>
+      </div>
+      <div class="flex gap-3">
+        <button onclick="closeAiRulesModal()"
+          class="flex-1 py-2.5 rounded-xl font-bold text-gray-600 bg-white/50 hover:bg-white/80">取消</button>
+        <button onclick="saveAiRules()" id="btn-save-ai-rules"
+          class="flex-1 py-2.5 rounded-xl font-bold text-white bg-cyan-500 hover:bg-cyan-600">保存规则</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="audit-modal"
+    class="fixed inset-0 z-[70] hidden flex items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4">
+    <div class="glass rounded-3xl p-6 sm:p-8 max-w-4xl w-full shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg sm:text-xl font-bold text-gray-900">📜 操作审计日志</h3>
+        <button onclick="closeAuditModal()" class="px-3 py-1 rounded-lg bg-white/60 text-gray-700 font-bold">关闭</button>
+      </div>
+      <div id="audit-list" class="max-h-[60vh] overflow-y-auto space-y-2"></div>
+    </div>
+  </div>
+
+  <div id="preview-modal"
+    class="fixed inset-0 z-[80] hidden flex items-center justify-center bg-gray-900/55 backdrop-blur-sm p-3 sm:p-5">
+    <div class="glass rounded-3xl w-full max-w-6xl h-[88vh] p-4 sm:p-6 flex flex-col">
+      <div class="flex items-center justify-between gap-3 mb-3">
+        <h3 id="preview-title" class="text-base sm:text-lg font-extrabold text-gray-900 truncate">文件预览</h3>
+        <div class="flex items-center gap-2">
+          <div id="image-zoom-tools"
+            class="hidden items-center gap-1 bg-white/70 border border-white/80 rounded-lg px-2 py-1">
+            <button onclick="zoomImage(-0.1)"
+              class="px-2 py-0.5 text-sm font-bold text-gray-700 hover:bg-white rounded">-</button>
+            <span id="image-zoom-percent" class="text-xs font-bold text-gray-700 min-w-[42px] text-center">100%</span>
+            <button onclick="zoomImage(0.1)"
+              class="px-2 py-0.5 text-sm font-bold text-gray-700 hover:bg-white rounded">+</button>
+            <button onclick="resetImageZoom()"
+              class="px-2 py-0.5 text-xs font-bold text-indigo-700 hover:bg-white rounded">重置</button>
+          </div>
+          <button onclick="closePreviewModal()"
+            class="px-3 py-1 rounded-lg bg-white/70 text-gray-700 font-bold border border-white/80">关闭</button>
+        </div>
+      </div>
+      <div id="preview-body" class="flex-1 rounded-2xl bg-white/60 border border-white/70 overflow-hidden"></div>
+      <div id="preview-grade-panel"
+        class="mt-3 hidden grid grid-cols-1 md:grid-cols-[160px,minmax(0,1fr),120px] gap-2 rounded-2xl bg-white/75 border border-white/80 p-3">
+        <input id="preview-grade-score" class="rounded-xl px-3 py-2 text-sm outline-none border border-[#e5e4e0]"
+          placeholder="分数 /100">
+        <input id="preview-grade-comment" class="rounded-xl px-3 py-2 text-sm outline-none border border-[#e5e4e0]"
+          placeholder="评语">
+        <button onclick="savePreviewGrade()"
+          class="rounded-xl px-3 py-2 text-sm font-bold bg-[#2c2c2c] text-white">保存评分</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="add-modal"
+    class="fixed inset-0 z-[60] hidden flex items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4">
+    <div class="glass rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl">
+      <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-4">✅ 新增作业科目</h3>
+      <input type="text" id="new-subject-name"
+        class="glass-input w-full rounded-xl px-4 py-3 mb-6 outline-none focus:ring-2 focus:ring-indigo-200"
+        placeholder="例如：2024毛概期中报告">
+      <div class="flex space-x-3 sm:space-x-4">
+        <button onclick="document.getElementById('add-modal').classList.add('hidden')"
+          class="flex-1 py-2.5 sm:py-3 rounded-xl font-bold text-gray-600 bg-white/50 hover:bg-white/80">取消</button>
+        <button onclick="addSubject()" id="btn-add"
+          class="flex-1 py-2.5 sm:py-3 rounded-xl font-bold text-white bg-indigo-500 hover:bg-indigo-600 whitespace-nowrap">确认创建</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="students-modal"
+    class="fixed inset-0 z-[66] hidden flex items-center justify-center bg-gray-900/45 backdrop-blur-sm p-4">
+    <div class="glass rounded-3xl p-6 sm:p-8 max-w-3xl w-full shadow-2xl">
+      <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-3">👥 学生档案库（单一数据源）</h3>
+      <p class="text-xs text-gray-600 font-bold mb-2">可自定义列头（英文变量名），需保留 `name` 列。</p>
+      <div class="flex gap-2 mb-2">
+        <input id="students-columns-input"
+          class="glass-input w-full rounded-lg px-3 py-2 text-xs sm:text-sm outline-none font-mono"
+          placeholder="name,studentId,className">
+        <button onclick="applyStudentColumns()"
+          class="px-3 py-2 rounded-lg bg-white/70 text-gray-700 font-bold border border-white/80 text-xs sm:text-sm whitespace-nowrap">更新列头</button>
+      </div>
+      <p id="students-columns-tip" class="text-[11px] text-gray-500 mb-2"></p>
+      <div class="flex flex-wrap items-center gap-2 mb-3 text-xs">
+        <select id="students-class-filter" onchange="setStudentsClassFilter(this.value)"
+          class="glass-input rounded-lg px-3 py-1.5 outline-none min-w-32">
+          <option value="">全部班级</option>
+        </select>
+        <span class="px-3 py-1.5 rounded-lg bg-white/50 text-gray-700 font-bold">当前 <b id="students-stat-count">0</b> 人</span>
+        <span class="px-3 py-1.5 rounded-lg bg-white/50 text-gray-700 font-bold">选中 <b id="students-stat-selected">0</b> 行</span>
+        <span class="px-3 py-1.5 rounded-lg bg-white/50 text-gray-700 font-bold">字段 <b id="students-stat-columns">0</b> 个</span>
+      </div>
+      <div class="flex gap-2 mb-3">
+        <button onclick="addStudentRow()"
+          class="px-3 py-1.5 rounded-lg bg-white/70 text-gray-700 font-bold border border-white/80 text-xs sm:text-sm">+
+          新增一行</button>
+        <button onclick="importStudentsFromText()"
+          class="px-3 py-1.5 rounded-lg bg-white/70 text-gray-700 font-bold border border-white/80 text-xs sm:text-sm">从文本导入</button>
+        <input id="students-batch-count" type="number" min="1" max="2000" value="50"
+          class="w-24 glass-input rounded-lg px-2 py-1.5 text-xs sm:text-sm outline-none" title="批量新增行数">
+        <button onclick="addStudentRowsBatch()"
+          class="px-3 py-1.5 rounded-lg bg-white/70 text-gray-700 font-bold border border-white/80 text-xs sm:text-sm">批量增行</button>
+      </div>
+      <div class="flex gap-2 mb-3">
+        <button onclick="selectAllStudentRows()"
+          class="px-3 py-1.5 rounded-lg bg-white/70 text-gray-700 font-bold border border-white/80 text-xs sm:text-sm">全选</button>
+        <button onclick="invertStudentRowSelection()"
+          class="px-3 py-1.5 rounded-lg bg-white/70 text-gray-700 font-bold border border-white/80 text-xs sm:text-sm">反选</button>
+        <button onclick="removeSelectedStudentRows()"
+          class="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 font-bold border border-red-100 text-xs sm:text-sm">删除选中</button>
+        <button onclick="removeEmptyStudentRows()"
+          class="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 font-bold border border-amber-100 text-xs sm:text-sm">清空空行</button>
+      </div>
+      <div class="glass-input rounded-xl overflow-hidden">
+        <div id="students-header" class="px-3 py-2 bg-white/40 text-xs font-bold text-gray-700"></div>
+        <div id="students-rows" class="max-h-[52vh] overflow-y-auto p-2 space-y-2"></div>
+      </div>
+      <div class="flex gap-3 mt-4">
+        <button onclick="closeStudentsModal()"
+          class="flex-1 py-2.5 rounded-xl font-bold text-gray-600 bg-white/50 hover:bg-white/80">取消</button>
+        <button onclick="saveStudentsBulk()" id="btn-save-students"
+          class="flex-1 py-2.5 rounded-xl font-bold text-white bg-fuchsia-500 hover:bg-fuchsia-600">保存学生库</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="model-settings-modal"
+    class="fixed inset-0 z-[67] hidden flex items-center justify-center bg-gray-900/45 backdrop-blur-sm p-4">
+    <div class="glass rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl">
+      <div class="flex items-start justify-between gap-4 mb-5">
+        <div>
+          <h3 class="text-lg sm:text-xl font-bold text-gray-900">模型配置中心</h3>
+          <p class="text-xs text-gray-600 mt-1">这里保存模型名、Base URL、Embedding 模型和超时。API Key 仍建议放在环境变量/密钥里。</p>
+        </div>
+        <button onclick="closeModelSettingsModal()"
+          class="px-3 py-1.5 rounded-lg bg-white/60 hover:bg-white text-gray-700 font-bold">关闭</button>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label class="block">
+          <span class="text-xs font-bold text-gray-700">AI Base URL</span>
+          <input id="model-ai-base-url" class="glass-input w-full rounded-xl px-3 py-2 mt-1 outline-none"
+            placeholder="https://api.siliconflow.cn/v1">
+        </label>
+        <label class="block">
+          <span class="text-xs font-bold text-gray-700">API Key</span>
+          <input id="model-api-key" type="password" class="glass-input w-full rounded-xl px-3 py-2 mt-1 outline-none"
+            placeholder="保存到后端配置；留空则清除后端 Key">
+        </label>
+        <label class="block">
+          <span class="text-xs font-bold text-gray-700">请求超时（毫秒）</span>
+          <input id="model-timeout-ms" type="number" min="5000" max="120000"
+            class="glass-input w-full rounded-xl px-3 py-2 mt-1 outline-none" placeholder="25000">
+        </label>
+        <label class="block">
+          <span class="text-xs font-bold text-gray-700">轻量模型（学生问答/提醒）</span>
+          <input id="model-light-model" class="glass-input w-full rounded-xl px-3 py-2 mt-1 outline-none"
+            placeholder="Qwen/Qwen2.5-7B-Instruct">
+        </label>
+        <label class="block">
+          <span class="text-xs font-bold text-gray-700">重模型（评语/复杂任务）</span>
+          <input id="model-heavy-model" class="glass-input w-full rounded-xl px-3 py-2 mt-1 outline-none"
+            placeholder="Qwen/Qwen2.5-7B-Instruct">
+        </label>
+        <label class="block sm:col-span-2">
+          <span class="text-xs font-bold text-gray-700">Embedding 模型（查重增强，可先留空）</span>
+          <input id="model-embedding-model" class="glass-input w-full rounded-xl px-3 py-2 mt-1 outline-none"
+            placeholder="BAAI/bge-large-zh-v1.5">
+        </label>
+      </div>
+      <p id="model-settings-status" class="text-xs text-gray-600 mt-4"></p>
+      <div class="flex gap-3 mt-5">
+        <button onclick="closeModelSettingsModal()"
+          class="flex-1 py-2.5 rounded-xl font-bold text-gray-600 bg-white/50 hover:bg-white/80">取消</button>
+        <button onclick="saveModelSettings()" id="btn-save-model-settings"
+          class="flex-1 py-2.5 rounded-xl font-bold text-white bg-sky-500 hover:bg-sky-600">保存模型配置</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./assets/admin-main.js"></script>
+</body>
+
+</html>

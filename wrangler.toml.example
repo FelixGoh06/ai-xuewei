@@ -1,0 +1,16 @@
+# Copy this file to wrangler.toml and fill in the Cloudflare resource names/IDs.
+# Cloudflare Pages uses `public` as the static output directory and `functions`
+# as the Pages Functions directory.
+
+name = "ai-xuewei"
+pages_build_output_dir = "./public"
+compatibility_date = "2026-04-23"
+
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "replace-with-r2-bucket-name"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "replace-with-d1-database-name"
+database_id = "replace-with-d1-database-id"

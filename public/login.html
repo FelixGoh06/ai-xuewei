@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileHub 登录</title>
+    <script src="./tailwind.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300..800&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="./assets/login.css">
+    <script src="./assets/login-head.js"></script>
+</head>
+
+<body class="min-h-screen bg-[#f5f4ed] font-sans text-gray-800">
+    <main class="min-h-screen flex items-center justify-center p-4 sm:p-6">
+        <div
+            class="bg-white rounded-[24px] w-full max-w-[440px] p-10 shadow-sm border border-[#e5e4e0] flex flex-col items-center card-tilt animate-float-in">
+            <!-- Logo -->
+            <div class="flex items-center justify-center mb-8">
+                <img src="https://imgbed.306421.xyz/file/svg/1777727759648_file.svg" alt="Logo"
+                    class="w-24 h-24 object-contain">
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex w-full border-b border-[#e5e4e0] mb-8 relative">
+                <button id="auth-tab-student"
+                    class="flex-1 pb-3 text-[13px] font-bold text-[#2c2c2c] border-b-2 border-[#2c2c2c] transition-colors relative top-[1px]">学生</button>
+                <button id="auth-tab-admin"
+                    class="flex-1 pb-3 text-[13px] font-bold text-[#8a8a8a] border-b-2 border-transparent hover:text-[#2c2c2c] transition-colors">管理员</button>
+            </div>
+
+            <!-- Header -->
+            <h3 class="text-[28px] font-serif text-[#2c2c2c] text-center leading-tight mb-3">统一身份登录</h3>
+            <p id="auth-subtitle" class="text-[13px] text-[#8a8a8a] text-center mb-8 px-4 leading-relaxed">
+                学生登录后可提交作业、查看个人历史记录。</p>
+
+            <!-- Student Form -->
+            <div id="student-login-panel" class="w-full">
+                <div class="relative mb-4">
+                    <input id="student-login-id" type="text"
+                        class="w-full rounded-full border border-[#e5e4e0] bg-white px-5 py-3.5 text-[13px] font-bold text-[#2c2c2c] outline-none focus:border-[#5c614e] transition-colors placeholder:text-[#a0a0a0] placeholder:font-normal"
+                        placeholder="学号 / 姓名 / 用户名">
+                </div>
+
+                <div class="relative mb-6">
+                    <input id="student-login-pwd" type="password"
+                        class="w-full rounded-full border border-[#e5e4e0] bg-white px-5 py-3.5 text-[13px] font-bold text-[#2c2c2c] outline-none focus:border-[#5c614e] transition-colors placeholder:text-[#a0a0a0] placeholder:font-normal"
+                        placeholder="密码">
+                    <button type="button"
+                        class="absolute right-5 top-1/2 -translate-y-1/2 text-[#8a8a8a] hover:text-[#2c2c2c] transition-colors"
+                        onclick="const pwd=document.getElementById('student-login-pwd'); pwd.type=pwd.type==='password'?'text':'password';">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
+
+                <button id="student-login-btn"
+                    class="btn-glow w-full rounded-full bg-[#2c2c2c] text-white py-3.5 text-[13px] font-bold tracking-wide hover:bg-[#4a4b46] transition-colors shadow-sm"
+                    style="border: none !important; box-shadow: none !important; background: #2c2c2c !important; color: white !important;">登
+                    录</button>
+                <p id="student-login-err" class="text-[#7f2b35] text-[12px] font-bold text-center mt-3 hidden"></p>
+
+                <div class="mt-6 text-center">
+                    <a href="#" class="text-[12px] font-bold text-[#8a8a8a] hover:text-[#2c2c2c] transition-colors"
+                        onclick="alert('首次登录密码为：123456'); return false;">忘记密码？</a>
+                </div>
+            </div>
+
+            <!-- Admin Form -->
+            <div id="admin-login-panel" class="w-full hidden">
+                <div class="relative mb-4">
+                    <input id="admin-login-id" type="text"
+                        class="w-full rounded-full border border-[#e5e4e0] bg-white px-5 py-3.5 text-[13px] font-bold text-[#2c2c2c] outline-none focus:border-[#5c614e] transition-colors placeholder:text-[#a0a0a0] placeholder:font-normal"
+                        placeholder="管理员账号">
+                </div>
+
+                <div class="relative mb-6">
+                    <input id="admin-login-pwd" type="password"
+                        class="w-full rounded-full border border-[#e5e4e0] bg-white px-5 py-3.5 text-[13px] font-bold text-[#2c2c2c] outline-none focus:border-[#5c614e] transition-colors placeholder:text-[#a0a0a0] placeholder:font-normal"
+                        placeholder="管理员密码">
+                    <button type="button"
+                        class="absolute right-5 top-1/2 -translate-y-1/2 text-[#8a8a8a] hover:text-[#2c2c2c] transition-colors"
+                        onclick="const pwd=document.getElementById('admin-login-pwd'); pwd.type=pwd.type==='password'?'text':'password';">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
+
+                <button id="admin-login-btn"
+                    class="btn-glow w-full rounded-full bg-[#2c2c2c] text-white py-3.5 text-[13px] font-bold tracking-wide hover:bg-[#4a4b46] transition-colors shadow-sm"
+                    style="border: none !important; box-shadow: none !important; background: #2c2c2c !important; color: white !important;">登
+                    录</button>
+                <p id="admin-login-err" class="text-[#7f2b35] text-[12px] font-bold text-center mt-3 hidden"></p>
+            </div>
+
+            <!-- First Change Password -->
+            <div id="first-change-wrap" class="hidden mt-6 pt-6 border-t border-[#e5e4e0] w-full">
+                <h3 class="text-[15px] font-bold text-[#2c2c2c] text-center mb-4">首次登录请修改密码</h3>
+                <div class="relative mb-4">
+                    <input id="first-new-password" type="password"
+                        class="w-full rounded-full border border-[#e5e4e0] bg-white px-5 py-3.5 text-[13px] font-bold text-[#2c2c2c] outline-none focus:border-[#5c614e] transition-colors placeholder:text-[#a0a0a0] placeholder:font-normal"
+                        placeholder="新密码（至少6位）">
+                </div>
+                <div class="relative mb-6">
+                    <input id="first-new-password-2" type="password"
+                        class="w-full rounded-full border border-[#e5e4e0] bg-white px-5 py-3.5 text-[13px] font-bold text-[#2c2c2c] outline-none focus:border-[#5c614e] transition-colors placeholder:text-[#a0a0a0] placeholder:font-normal"
+                        placeholder="确认新密码">
+                </div>
+                <button id="first-change-password-btn"
+                    class="btn-glow w-full rounded-full bg-[#2c2c2c] text-white py-3.5 text-[13px] font-bold tracking-wide hover:bg-[#4a4b46] transition-colors shadow-sm"
+                    style="border: none !important; box-shadow: none !important; background: #2c2c2c !important; color: white !important;">保存新密码</button>
+                <p id="first-change-password-err" class="text-[#7f2b35] text-[12px] font-bold text-center mt-3 hidden">
+                </p>
+            </div>
+        </div>
+    </main>
+
+
+    <script src="./assets/login-main.js"></script>
+
+    <script src="./assets/login-part-3.js"></script>
+</body>
+
+</html>
