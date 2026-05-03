@@ -272,18 +272,26 @@ Cloudflare 版本使用：
 
 推荐使用 **Cloudflare 网页连接 GitHub 部署**。这种方式不需要准备 `wrangler.toml`，直接在 Cloudflare Dashboard 填表即可。`wrangler.toml` 只适合想用命令行部署的人。
 
-### 1. 创建 Pages 项目
+### 1. Fork 并创建 Pages 项目
 
-可以点击 README 顶部的 Cloudflare Pages 按钮进入 Pages 创建页，也可以在 Cloudflare Dashboard 手动进入：
+如果是部署自己的实例，建议先在 GitHub 右上角点击 **Fork**，把本仓库复制到自己的 GitHub 账号或组织下。
+
+Fork 后，在 Cloudflare Dashboard 手动进入：
 
 ```text
 Workers & Pages -> Create application -> Pages -> Connect to Git
 ```
 
-选择 GitHub 仓库：
+选择你自己 Fork 后的 GitHub 仓库，例如：
 
 ```text
-FelixGoh06/ai-xuewei
+你的用户名/ai-xuewei
+```
+
+如果是组织仓库，则选择：
+
+```text
+你的组织名/ai-xuewei
 ```
 
 在“设置构建和部署”页面按下面填写：
