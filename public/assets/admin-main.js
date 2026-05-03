@@ -513,6 +513,7 @@
       localStorage.setItem('adminActiveView', targetView);
       const menu = document.getElementById('sidebar-menu');
       if (menu && window.innerWidth < 1024) menu.classList.add('hidden');
+      if (window.innerWidth < 1024) toggleAdminAssistant(false);
       if (targetView === 'audit') startAuditAutoRefresh();
       else stopAuditAutoRefresh();
       if (targetView === 'admin-accounts') loadAdminAccounts();
@@ -2503,6 +2504,24 @@ ${tip}`, currentDeadline || '');
       }
     }
 
+    function toggleAdminAssistant(force) {
+      const panel = document.querySelector('.admin-assistant-panel');
+      const backdrop = document.getElementById('admin-ai-mobile-backdrop');
+      if (!panel) return;
+      const shouldOpen = typeof force === 'boolean' ? force : !panel.classList.contains('is-open');
+      panel.classList.toggle('is-open', shouldOpen);
+      backdrop?.classList.toggle('hidden', !shouldOpen);
+      document.body.classList.toggle('admin-ai-open', shouldOpen);
+      if (shouldOpen) {
+        ensureAdminAssistantPanel();
+        setTimeout(() => document.getElementById('admin-ai-chat-input')?.focus(), 180);
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024) toggleAdminAssistant(false);
+    });
+
     function appendAdminAssistantMessage(role, text) {
       ensureAdminAssistantPanel();
       const list = document.getElementById('admin-ai-chat-list');
@@ -2621,7 +2640,8 @@ ${tip}`, currentDeadline || '');
       openAuditModal,
       closeAuditModal,
       askAdminAssistant,
-      sendAdminAssistant
+      sendAdminAssistant,
+      toggleAdminAssistant
     });
 
     checkAuth();

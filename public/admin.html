@@ -37,7 +37,10 @@
     class="fixed top-0 left-0 w-full lg:w-[260px] lg:h-screen bg-[#fbf9f4] lg:bg-[#efece1]/30 backdrop-blur-md border-b lg:border-b-0 lg:border-r border-[#e5e4e0] px-4 lg:px-6 py-4 lg:py-8 flex flex-col justify-between items-stretch z-40 hidden transition-all">
     <div class="flex items-center justify-between lg:block lg:mb-12">
       <div>
-        <h1 class="text-xl lg:text-2xl font-serif text-[#2c2c2c] italic whitespace-nowrap">AI 学委</h1>
+        <div class="admin-brand-logo-crop">
+          <img src="https://imgbed.306421.xyz/file/背景/1777783256470_1_file.png" alt="AI学委"
+            class="admin-brand-logo-img">
+        </div>
         <p class="text-[10px] tracking-widest text-[#7a7a7a] lg:mt-1 font-bold">ADMIN WORKSPACE</p>
       </div>
       <button class="lg:hidden p-2 text-[#5e6059]"
@@ -239,6 +242,13 @@
       </aside>
     </div>
   </div>
+
+  <div id="admin-ai-mobile-backdrop" class="admin-ai-mobile-backdrop hidden" onclick="toggleAdminAssistant(false)"></div>
+  <button id="admin-ai-mobile-fab" class="admin-ai-mobile-fab" onclick="toggleAdminAssistant(true)"
+    type="button">
+    <span>AI</span>
+    <strong>后台助手</strong>
+  </button>
 
   <div id="explorer-modal"
     class="fixed inset-0 z-50 hidden bg-[#fbf9f4] transition-all duration-300 flex flex-col overflow-y-auto md:overflow-hidden">

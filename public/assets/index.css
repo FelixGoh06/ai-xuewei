@@ -39,6 +39,37 @@
             box-shadow: 0 12px 30px rgba(49, 51, 46, 0.04);
         }
 
+        .brand-logo-crop {
+            width: 6.25rem;
+            height: 2.55rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex: 0 0 auto;
+        }
+
+        .brand-logo-img {
+            width: 6.25rem;
+            height: 6.25rem;
+            max-width: none;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        @media (min-width: 1024px) {
+            .brand-logo-crop {
+                width: 7rem;
+                height: 2.75rem;
+            }
+
+            .brand-logo-img {
+                width: 7rem;
+                height: 7rem;
+            }
+        }
+
         .glass-input {
             background: color-mix(in srgb, var(--surface-low) 86%, white 14%);
             border: 1px solid var(--outline);
