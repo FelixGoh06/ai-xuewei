@@ -270,26 +270,122 @@ Cloudflare 版本使用：
 - R2：保存提交文件和系统 JSON。
 - D1：保存学生库、学生密码、命名规则等结构化数据。
 
-### 1. 创建资源
+推荐使用 **Cloudflare 网页连接 GitHub 部署**。这种方式不需要准备 `wrangler.toml`，直接在 Cloudflare Dashboard 填表即可。`wrangler.toml` 只适合想用命令行部署的人。
 
-可以点击 README 顶部的 Cloudflare Pages 按钮进入 Pages 创建页，或在 Cloudflare Dashboard 手动创建：
+### 1. 创建 Pages 项目
 
-- 一个 Pages 项目，并连接本 GitHub 仓库。
-- 一个 R2 Bucket。
-- 一个 D1 Database。
-
-Pages 创建时建议填写：
+可以点击 README 顶部的 Cloudflare Pages 按钮进入 Pages 创建页，也可以在 Cloudflare Dashboard 手动进入：
 
 ```text
-Build command：留空
-Build output directory：public
-Root directory：留空
-Functions directory：默认 functions
+Workers & Pages -> Create application -> Pages -> Connect to Git
 ```
 
-注意：R2/D1 绑定和环境变量仍需要在 Pages 项目 Settings 里配置。
+选择 GitHub 仓库：
 
-### 2. 准备 wrangler 配置
+```text
+FelixGoh06/ai-xuewei
+```
+
+在“设置构建和部署”页面按下面填写：
+
+```text
+项目名称：ai-xuewei
+生产分支：main
+框架预设：无
+构建命令：留空
+构建输出目录：public
+根目录：留空
+```
+
+然后点击“保存并部署”。第一次部署可能会先失败或登录不了，这是正常的，因为 R2、D1 和环境变量还没有配完。
+
+### 2. 创建 R2 和 D1
+
+在 Cloudflare Dashboard 里创建：
+
+```text
+R2 Bucket：名字可以填 ai-xuewei
+D1 Database：名字可以填 ai-xuewei
+```
+
+名字可以自定义，但后面绑定变量名必须固定。
+
+### 3. 配置 Pages 绑定
+
+进入你的 Pages 项目：
+
+```text
+Settings -> Functions -> Bindings
+```
+
+添加两个绑定：
+
+```text
+类型：R2 存储桶
+变量名：R2_BUCKET
+选择：刚创建的 R2 Bucket
+
+类型：D1 数据库
+变量名：DB
+选择：刚创建的 D1 Database
+```
+
+注意变量名必须一字不差：
+
+```text
+R2_BUCKET
+DB
+```
+
+### 4. 配置环境变量
+
+进入：
+
+```text
+Settings -> Environment variables
+```
+
+至少添加：
+
+```text
+ADMIN_SESSION_SECRET=换成一串长随机字符
+DELETE_TOKEN_SECRET=换成一串长随机字符
+STUDENT_SESSION_SECRET=换成一串长随机字符
+ADMIN_USERS={"admin":"123456"}
+ALLOWED_EXTENSIONS=.pdf,.doc,.docx,.jpg,.jpeg,.png,.zip
+```
+
+可选 AI 配置：
+
+```text
+OPENAI_API_KEY=
+AI_BASE_URL=https://api.openai.com/v1
+AI_LIGHT_MODEL=
+AI_HEAVY_MODEL=
+AI_TIMEOUT_MS=20000
+```
+
+也可以上线后在后台“模型配置中心”维护模型配置。只有 `admin` 主账号可以配置模型。
+
+### 5. 重新部署
+
+绑定和环境变量修改后，需要重新部署一次。进入：
+
+```text
+Deployments -> Retry deployment
+```
+
+或者本地执行：
+
+```bash
+npx wrangler pages deploy public --project-name ai-xuewei
+```
+
+如果你的 Pages 项目名不是 `ai-xuewei`，把命令里的项目名换成自己的项目名。
+
+### 可选：wrangler 命令行部署
+
+只有想用命令行管理 Cloudflare 资源时，才需要准备 `wrangler.toml`：
 
 ```bash
 cp wrangler.toml.example wrangler.toml
@@ -312,60 +408,26 @@ database_name = "your-d1-name"
 database_id = "your-d1-id"
 ```
 
-绑定名必须保持：
-
-```text
-R2_BUCKET
-DB
-```
-
-### 3. 配置环境变量
-
-Cloudflare Pages 环境变量至少需要：
-
-```text
-ADMIN_SESSION_SECRET=replace-with-a-long-random-secret
-DELETE_TOKEN_SECRET=replace-with-a-long-random-secret
-STUDENT_SESSION_SECRET=replace-with-a-long-random-secret
-ADMIN_USERS={"admin":"123456"}
-ALLOWED_EXTENSIONS=.pdf,.doc,.docx,.jpg,.jpeg,.png,.zip
-```
-
-可选 AI 配置：
-
-```text
-OPENAI_API_KEY=
-AI_BASE_URL=https://api.openai.com/v1
-AI_LIGHT_MODEL=
-AI_HEAVY_MODEL=
-AI_TIMEOUT_MS=20000
-```
-
-也可以上线后在后台“模型配置中心”维护模型配置。只有 `admin` 主账号可以配置模型。
-
-### 4. 本地预览
+本地预览：
 
 ```bash
 npx wrangler pages dev public
 ```
 
-### 5. 部署
+部署：
 
 ```bash
 npx wrangler pages deploy public --project-name ai-xuewei
 ```
 
-也可以在 Cloudflare Pages Dashboard 连接 GitHub 仓库。配置完成后请确认：
+### 常见问题
 
-- Build command 留空。
-- Build output directory 填 `public`。
-- Functions directory 使用默认 `functions`。
-- 绑定 R2：`R2_BUCKET`。
-- 绑定 D1：`DB`。
-- 配置环境变量。
-- 修改绑定或环境变量后，需要重新部署一次。
+如果登录时报 `Cannot read properties of undefined (reading 'get')` 或 `R2_BUCKET 未绑定`，通常表示当前访问的 Pages 部署没有吃到 `R2_BUCKET` 绑定。请确认：
 
-如果登录时报 `Cannot read properties of undefined (reading 'get')`，通常表示当前访问的 Pages 部署没有吃到 `R2_BUCKET` 绑定。请确认访问的 Pages 项目、部署环境（Production/Preview）和绑定配置是同一个。
+- 访问的网址和正在配置的是同一个 Pages 项目。
+- 绑定配置在正确环境里，Production 和 Preview 不要配错。
+- R2 绑定变量名是 `R2_BUCKET`，D1 绑定变量名是 `DB`。
+- 修改绑定或环境变量后已经重新部署。
 
 ## OpenClaw Skill
 
